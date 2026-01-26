@@ -16,7 +16,7 @@ const SplashScreen = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.replace("/getStarted");
-    }, 300000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
