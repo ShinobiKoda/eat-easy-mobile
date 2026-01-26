@@ -8,6 +8,7 @@ module.exports = {
       colors: {
         "neutral-700": "var(--neutral-700)",
         "orange-1": "var(--orange-1)",
+        "neutral-150": "var(--neutral-150)"
       },
       fontFamily: {
         "mulish-regular": ["Mulish-Regular"],

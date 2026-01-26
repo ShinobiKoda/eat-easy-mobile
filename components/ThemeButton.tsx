@@ -6,9 +6,14 @@ import { useTheme } from "../contexts/ThemeContext";
 interface ThemeButtonProps {
   size?: number;
   style?: object;
+  className?: string;
 }
 
-const ThemeButton: React.FC<ThemeButtonProps> = ({ size = 28, style }) => {
+const ThemeButton: React.FC<ThemeButtonProps> = ({
+  size = 28,
+  style,
+  className,
+}) => {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -22,9 +27,12 @@ const ThemeButton: React.FC<ThemeButtonProps> = ({ size = 28, style }) => {
           alignItems: "center",
           justifyContent: "center",
           opacity: pressed ? 0.7 : 1,
+          position: "absolute",
+          bottom: 0,
         },
         style,
       ]}
+      className={className}
       accessibilityLabel="Toggle theme"
       accessibilityRole="button"
     >

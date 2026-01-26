@@ -41,7 +41,7 @@ export function SafeAreaViewWrapper({
         start={{ x: 0, y: 0.5 }}
         end={{ x: 1, y: 0.5 }}
         // Ensure the gradient itself fills the SafeAreaView
-        style={{ flex: 1 }}
+        style={{ flex: 1, zIndex: -10}}
         className={`flex-1 ${className || ""}`}
       >
         {children}
