@@ -4,14 +4,27 @@ import {
   SlideInUpView,
 } from "@/components/animations/reanimated";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
+import { useEffect } from "react";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import ThemeButton from "@/components/ThemeButton";
 
 const SplashScreen = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.replace("/getStarted");
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View className="flex-1 relative">
+        <ThemeButton />
         <FadeInView
           duration={1000}
           style={{ position: "absolute", top: 0, left: 0, zIndex: -1 }}
