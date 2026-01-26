@@ -23,31 +23,26 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded || error) {
+      // Small delay can help prevent the "unmounted state update" on slower devices
       SplashScreen.hideAsync();
     }
   }, [loaded, error]);
 
-  if (!loaded && !error) {
-    return (
-      <SafeAreaProvider>
-        <ThemeProvider>
-          <LoadingState />
-        </ThemeProvider>
-      </SafeAreaProvider>
-    );
-  }
-
+  // Keep the Providers at the top level so they don't unmount/remount
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-        </Stack>
+        {(!loaded && !error) ? (
+          <LoadingState />
+        ) : (
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+          </Stack>
+        )}
       </ThemeProvider>
     </SafeAreaProvider>
   );
 }
-
 function LoadingState() {
   const { theme } = useTheme();
 
