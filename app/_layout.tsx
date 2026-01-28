@@ -37,7 +37,9 @@ export default function RootLayout() {
         ) : (
           <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="getStarted" options={{ headerShown: false }} />
           </Stack>
+
         )}
       </ThemeProvider>
     </SafeAreaProvider>
@@ -50,7 +52,7 @@ function LoadingState() {
     <SafeAreaViewWrapper>
       <View className="flex-1 items-center justify-center">
         <ActivityIndicator
-          size="large"
+          size="small"
           color={theme === "dark" ? "#FFFFFF" : "#32324D"}
         />
       </View>
