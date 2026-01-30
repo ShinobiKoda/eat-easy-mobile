@@ -1,5 +1,6 @@
+import { Image } from "expo-image";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ImageSourcePropType, StyleSheet, Text, View } from "react-native";
 import { ScaleOnPressView } from "./animations/reanimated";
 
 interface PrimaryButtonProps {
@@ -8,6 +9,7 @@ interface PrimaryButtonProps {
   bgClass?: string;
   textClass?: string;
   leftIcon?: React.ReactNode;
+  imageSource?: ImageSourcePropType;
 }
 
 const PrimaryButton = ({
@@ -16,6 +18,7 @@ const PrimaryButton = ({
   bgClass = "bg-primary-btn-light dark:bg-primary-btn-dark",
   textClass = "text-white",
   leftIcon,
+  imageSource,
 }: PrimaryButtonProps) => {
   return (
     <ScaleOnPressView
@@ -24,6 +27,7 @@ const PrimaryButton = ({
     >
       <View className="flex flex-row items-center justify-center">
         {leftIcon && <View className="mr-2">{leftIcon}</View>}
+        {imageSource && <Image source={imageSource} className="mr-2 h-5 w-5" />}
         <Text
           className={`text-center font-mulish-semibold text-base ${textClass}`}
         >

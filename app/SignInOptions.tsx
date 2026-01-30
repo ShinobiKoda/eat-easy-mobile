@@ -29,6 +29,7 @@ const SignInOptions = () => {
           text="Continue with Facebook"
           textClass="text-purple-2"
           bgClass="bg-white"
+          imageSource={require("@/assets/images/facebook-icon.png")}
         />
         <PrimaryButton
           text="Continue with Gmail"
