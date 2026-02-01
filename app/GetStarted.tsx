@@ -1,7 +1,6 @@
 import PrimaryButton from "@/components/PrimaryButton";
 import { ProgressBar } from "@/components/ProgressBar";
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
-import ThemeButton from "@/components/ThemeButton";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -12,8 +11,6 @@ const GetStarted = () => {
 
   return (
     <SafeAreaViewWrapper>
-      <ThemeButton className="absolute right-0 top-4 z-50" />
-
       <View className="w-full h-[432px]">
         <Image
           source={require("@/assets/images/getStarted-illustration.png")}
@@ -40,7 +37,7 @@ const GetStarted = () => {
           </View>
           <PrimaryButton
             text="Get Started"
-            onPress={() => router.replace("/SignInOptions")}
+            onPress={() => router.push("/SignInOptions")}
             bgClass="bg-primary-btn"
           />
         </View>

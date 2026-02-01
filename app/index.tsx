@@ -15,7 +15,7 @@ const SplashScreen = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.replace("/getStarted");
+      router.replace("/GetStarted");
     }, 3000);
 
     return () => clearTimeout(timer);
@@ -59,7 +59,6 @@ const SplashScreen = () => {
             </Text>
           </PopInView>
         </View>
-        <ThemeButton className="absolute top-6 right-4 z-20" />
       </View>
     </SafeAreaViewWrapper>
   );

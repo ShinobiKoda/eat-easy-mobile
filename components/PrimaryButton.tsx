@@ -10,6 +10,7 @@ interface PrimaryButtonProps {
   textClass?: string;
   leftIcon?: React.ReactNode;
   imageSource?: ImageSourcePropType;
+  borderClass?: string;
 }
 
 const PrimaryButton = ({
@@ -19,15 +20,21 @@ const PrimaryButton = ({
   textClass = "text-white",
   leftIcon,
   imageSource,
+  borderClass=""
 }: PrimaryButtonProps) => {
   return (
     <ScaleOnPressView
-      className={`px-6 py-4 w-full ${bgClass} rounded-2xl`}
+      className={`px-6 py-4 w-full ${bgClass} ${borderClass} rounded-2xl`}
       onPress={onPress}
     >
       <View className="flex flex-row items-center justify-center">
         {leftIcon && <View className="mr-2">{leftIcon}</View>}
-        {imageSource && <Image source={imageSource} className="mr-2 h-5 w-5" />}
+        {imageSource && (
+          <Image
+            source={imageSource}
+            style={{ width: 20, height: 20, marginRight: 8 }}
+          />
+        )}
         <Text
           className={`text-center font-mulish-semibold text-base ${textClass}`}
         >
