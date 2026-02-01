@@ -1,20 +1,31 @@
 import KeyboardAvoidingViewWrapper from "@/components/KeyboardAvoidingViewWrapper";
-import PrimaryButton from "@/components/PrimaryButton";
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
 import { accountSchema } from "@/schemas/accountSchema";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
-import { ScrollView, Text, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import PhoneInput, { ICountry } from "react-native-international-phone-number";
 
 const CreateAccount = () => {
   const phoneInputRef = useRef(null);
+  const router = useRouter();
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   function handleSelectedCountry(country: ICountry) {
     setSelectedCountry(country);
@@ -46,6 +57,18 @@ const CreateAccount = () => {
 
     setErrors({});
     return true;
+  };
+
+  const handleNext = () => {
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+
+    // Simulate account creation delay
+    setTimeout(() => {
+      setIsLoading(false);
+      router.push("/VerifyCode");
+    }, 3000); // 3 seconds delay
   };
 
   const inputClassName =
@@ -107,14 +130,26 @@ const CreateAccount = () => {
             </View>
             {/* Password Input */}
             <View className="w-full">
-              <TextInput
-                className={inputClassName}
-                placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                placeholderTextColor="#9CA3AF"
-              />
+              <View className="relative">
+                <TextInput
+                  className={inputClassName}
+                  placeholder="Password"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!isPasswordVisible}
+                  placeholderTextColor="#9CA3AF"
+                />
+                <TouchableOpacity
+                  className="absolute right-4 top-1/2 -translate-y-1/2"
+                  onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                >
+                  <Ionicons
+                    name={isPasswordVisible ? "eye-off" : "eye"}
+                    size={20}
+                    color="#6b7280"
+                  />
+                </TouchableOpacity>
+              </View>
               {errors.password && (
                 <Text className="text-red-500 font-mulish-medium text-xs mt-1 px-1">
                   {errors.password}
@@ -185,7 +220,30 @@ const CreateAccount = () => {
           </View>
 
           <View className="w-full px-6 mt-[124px]">
-            <PrimaryButton text="Next" bgClass="bg-primary-btn" />
+            <TouchableOpacity
+              className={`w-full py-4 rounded-2xl flex-row items-center justify-center ${
+                isLoading ? "bg-neutral-400" : "bg-primary-btn"
+              }`}
+              onPress={handleNext}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <ActivityIndicator
+                    size="small"
+                    color="white"
+                    className="mr-2"
+                  />
+                  <Text className="text-white font-mulish-semibold text-base ml-2">
+                    Creating account...
+                  </Text>
+                </>
+              ) : (
+                <Text className="text-white font-mulish-semibold text-base">
+                  Next
+                </Text>
+              )}
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingViewWrapper>
