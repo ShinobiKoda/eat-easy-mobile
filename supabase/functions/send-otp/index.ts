@@ -13,18 +13,26 @@ serve(async (req) => {
 
   try {
     const { email } = await req.json()
-    const code = Math.floor(1000 + Math.random() * 9000).toString()
 
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const { error: dbError } = await supabaseAdmin
+    // Get the most recent OTP for this email
+    const { data: otpData, error: otpError } = await supabaseAdmin
       .from('otp_verifications')
-      .insert([{ email, code }])
+      .select('code')
+      .eq('email', email)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
 
-    if (dbError) throw dbError
+    if (otpError || !otpData) {
+      throw new Error('No OTP found for this email')
+    }
+
+    const code = otpData.code
 
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',

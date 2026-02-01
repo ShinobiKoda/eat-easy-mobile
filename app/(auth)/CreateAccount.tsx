@@ -1,11 +1,13 @@
 import KeyboardAvoidingViewWrapper from "@/components/KeyboardAvoidingViewWrapper";
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
+import { supabase } from "@/lib/Supabase";
 import { accountSchema } from "@/schemas/accountSchema";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   ScrollView,
   Text,
   TextInput,
@@ -59,27 +61,107 @@ const CreateAccount = () => {
     return true;
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (!validateForm()) return;
 
     setIsLoading(true);
 
-    // Simulate account creation delay
-    setTimeout(() => {
+    try {
+      // 1. Sign up user with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            username,
+            phone: phoneNumber,
+          },
+        },
+      });
+
+      if (authError) {
+        Alert.alert("Error", authError.message);
+        setIsLoading(false);
+        return;
+      }
+
+      // 2. Generate 4-digit OTP
+      const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
+
+      // 3. Store OTP in database with expiration (10 minutes)
+      const expiresAt = new Date();
+      expiresAt.setMinutes(expiresAt.getMinutes() + 10);
+
+      const { error: otpError } = await supabase
+        .from("otp_verifications")
+        .insert([
+          {
+            email,
+            code: otpCode,
+            expires_at: expiresAt.toISOString(),
+          },
+        ]);
+
+      if (otpError) {
+        console.error("OTP storage error:", otpError);
+        Alert.alert("Error", "Failed to generate verification code.");
+        setIsLoading(false);
+        return;
+      }
+
+      // 4. Send OTP via Supabase Edge Function
+      const { error: sendError } = await supabase.functions.invoke("send-otp", {
+        body: { email },
+      });
+
+      if (sendError) {
+        // Log the code for testing if edge function fails
+        console.log("⚠️ Edge function failed. OTP code for testing:", otpCode);
+        Alert.alert(
+          "Note",
+          `Email service unavailable. For testing, your code is: ${otpCode}`,
+          [
+            {
+              text: "Continue",
+              onPress: () => {
+                router.push({
+                  pathname: "/VerifyCode",
+                  params: { email },
+                });
+              },
+            },
+          ],
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      // 5. Navigate to verification screen
       setIsLoading(false);
-      router.push("/VerifyCode");
-    }, 3000);
-    setUsername("");
-    setEmail("");
-    setPassword("");
-    setPhoneNumber("");
-    setSelectedCountry(null);
-    setIsPasswordVisible(false);
-    setErrors({});
+      router.push({
+        pathname: "/VerifyCode",
+        params: { email },
+      });
+
+      // Clear form
+      setUsername("");
+      setEmail("");
+      setPassword("");
+      setPhoneNumber("");
+      setSelectedCountry(null);
+      setIsPasswordVisible(false);
+      setErrors({});
+    } catch (error) {
+      console.error("Account creation error:", error);
+      Alert.alert("Error", "Something went wrong. Please try again.");
+      setIsLoading(false);
+    }
   };
 
   const inputClassName =
     "border border-neutral-150 font-mulish-semibold text-neutral-500 text-sm rounded-2xl bg-white px-4 py-4 w-full";
+
+  const isFormFilled = username && email && password && phoneNumber;
 
   return (
     <SafeAreaViewWrapper>
@@ -229,10 +311,10 @@ const CreateAccount = () => {
           <View className="w-full px-6 mt-[124px]">
             <TouchableOpacity
               className={`w-full py-4 rounded-2xl flex-row items-center justify-center ${
-                isLoading ? "bg-neutral-400" : "bg-primary-btn"
+                isLoading || !isFormFilled ? "bg-neutral-400" : "bg-primary-btn"
               }`}
               onPress={handleNext}
-              disabled={isLoading}
+              disabled={isLoading || !isFormFilled}
             >
               {isLoading ? (
                 <>
