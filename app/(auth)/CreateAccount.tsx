@@ -68,7 +68,14 @@ const CreateAccount = () => {
     setTimeout(() => {
       setIsLoading(false);
       router.push("/VerifyCode");
-    }, 3000); // 3 seconds delay
+    }, 3000);
+    setUsername("");
+    setEmail("");
+    setPassword("");
+    setPhoneNumber("");
+    setSelectedCountry(null);
+    setIsPasswordVisible(false);
+    setErrors({});
   };
 
   const inputClassName =
