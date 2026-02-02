@@ -1,9 +1,9 @@
 import PrimaryButton from "@/components/PrimaryButton";
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
+import ThemeButton from "@/components/ThemeButton";
 import { useRouter } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import ThemeButton from "@/components/ThemeButton";
+import { Text, View } from "react-native";
 
 const SignInOptions = () => {
   const router = useRouter();
@@ -21,7 +21,11 @@ const SignInOptions = () => {
         </Text>
       </View>
       <View className="mt-[56px] flex flex-col gap-3">
-        <PrimaryButton text="Get Started" bgClass="bg-primary-btn" onPress={() => router.push("/CreateAccount")}/>
+        <PrimaryButton
+          text="Get Started"
+          bgClass="bg-primary-btn"
+          onPress={() => router.push("/CreateAccount")}
+        />
         <View className="w-full flex flex-row items-center justify-between">
           <View className="h-px bg-neutral-200 w-1/3"></View>
           <Text className="font-mulish-regular dark:text-purple-4">OR</Text>
@@ -45,5 +49,3 @@ const SignInOptions = () => {
 };
 
 export default SignInOptions;
-
-const styles = StyleSheet.create({});

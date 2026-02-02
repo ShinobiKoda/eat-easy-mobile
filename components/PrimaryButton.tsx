@@ -1,6 +1,6 @@
 import { Image } from "expo-image";
 import React from "react";
-import { ImageSourcePropType, StyleSheet, Text, View } from "react-native";
+import { ImageSourcePropType, Text, View } from "react-native";
 import { ScaleOnPressView } from "./animations/reanimated";
 
 interface PrimaryButtonProps {
@@ -20,7 +20,7 @@ const PrimaryButton = ({
   textClass = "text-white",
   leftIcon,
   imageSource,
-  borderClass=""
+  borderClass = "",
 }: PrimaryButtonProps) => {
   return (
     <ScaleOnPressView
@@ -46,5 +46,3 @@ const PrimaryButton = ({
 };
 
 export default PrimaryButton;
-
-const styles = StyleSheet.create({});

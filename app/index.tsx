@@ -4,7 +4,6 @@ import {
   SlideInUpView,
 } from "@/components/animations/reanimated";
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
-import ThemeButton from "@/components/ThemeButton";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
@@ -19,7 +18,7 @@ const SplashScreen = () => {
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [router]);
 
   return (
     <SafeAreaViewWrapper style={{ flex: 1 }}>

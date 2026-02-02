@@ -4,7 +4,7 @@ import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 const GetStarted = () => {
   const router = useRouter();
@@ -26,7 +26,7 @@ const GetStarted = () => {
             Full contactless experience
           </Text>
           <Text className="text-center font-mulish-medium text-base text-neutral-600 dark:text-neutral-150">
-            From ordering to paying, that's all contactless
+            From ordering to paying, that&apos;s all contactless
           </Text>
         </View>
         <View className="flex flex-col gap-[10px] mt-8">
@@ -47,5 +47,3 @@ const GetStarted = () => {
 };
 
 export default GetStarted;
-
-const styles = StyleSheet.create({});

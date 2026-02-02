@@ -72,7 +72,7 @@ const CreateAccount = () => {
 
     try {
       // 1. Sign up user with Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      const { error: authError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -146,7 +146,7 @@ const CreateAccount = () => {
           setIsLoading(false);
           return;
         }
-      } catch (sendError) {
+      } catch {
         // Log the code for testing if fetch fails
         console.log("⚠️ Email send failed. OTP code for testing:", otpCode);
         Alert.alert(

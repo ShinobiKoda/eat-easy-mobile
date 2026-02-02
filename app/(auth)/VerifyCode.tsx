@@ -221,7 +221,7 @@ const VerifyCode = () => {
         disabled={isLoading}
       >
         <Text className="text-center font-mulish-semibold text-neutral-500">
-          Didn't receive a code?{" "}
+          Didn&apos;t receive a code?{" "}
           <Text className="text-neutral-800">Resend</Text>
         </Text>
       </Pressable>
