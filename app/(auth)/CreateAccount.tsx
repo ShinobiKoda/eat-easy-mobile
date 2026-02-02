@@ -109,14 +109,42 @@ const CreateAccount = () => {
         return;
       }
 
-      // 4. Send OTP via Supabase Edge Function
-      const { error: sendError } = await supabase.functions.invoke("send-otp", {
-        body: { email },
-      });
+      // 4. Send OTP via API
+      const apiUrl = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
 
-      if (sendError) {
-        // Log the code for testing if edge function fails
-        console.log("⚠️ Edge function failed. OTP code for testing:", otpCode);
+      try {
+        const response = await fetch(`${apiUrl}/api/send-otp`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, code: otpCode }),
+        });
+
+        if (!response.ok) {
+          // Log the code for testing if API fails
+          console.log("⚠️ API call failed. OTP code for testing:", otpCode);
+          Alert.alert(
+            "Note",
+            `Email service unavailable. For testing, your code is: ${otpCode}`,
+            [
+              {
+                text: "Continue",
+                onPress: () => {
+                  router.push({
+                    pathname: "/VerifyCode",
+                    params: { email },
+                  });
+                },
+              },
+            ],
+          );
+          setIsLoading(false);
+          return;
+        }
+      } catch (sendError) {
+        // Log the code for testing if fetch fails
+        console.log("⚠️ Email send failed. OTP code for testing:", otpCode);
         Alert.alert(
           "Note",
           `Email service unavailable. For testing, your code is: ${otpCode}`,
@@ -159,7 +187,7 @@ const CreateAccount = () => {
   };
 
   const inputClassName =
-    "border border-neutral-150 font-mulish-semibold text-neutral-500 text-sm rounded-2xl bg-white px-4 py-4 w-full";
+    "border border-neutral-150 font-mulish-semibold text-neutral-500 text-sm rounded-2xl bg-white px-4 py-4 w-full dark:bg-neutral-700 dark:border-neutral-600 dark:text-neutral-200 dark:placeholder:text-neutral-200";
 
   const isFormFilled = username && email && password && phoneNumber;
 
@@ -176,10 +204,10 @@ const CreateAccount = () => {
           showsVerticalScrollIndicator={false}
         >
           <View className="flex flex-col items-center justify-center px-6 mb-[40px] gap-[14px]">
-            <Text className="font-dm-medium text-[22px] text-neutral-800">
+            <Text className="font-dm-medium text-[22px] text-neutral-800 dark:text-white">
               Getting Started! ✌️
             </Text>
-            <Text className="font-mulish-medium text-base text-neutral-600 text-center">
+            <Text className="font-mulish-medium text-base text-neutral-600 dark:text-neutral-150 text-center">
               Looks like you&apos;re new to us! Create an account for a complete
               experience.
             </Text>
