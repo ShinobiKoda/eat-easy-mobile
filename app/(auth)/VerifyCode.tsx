@@ -107,23 +107,33 @@ const VerifyCode = () => {
         return;
       }
 
-      // Send OTP via Supabase Edge Function
-      const { error: sendError } = await supabase.functions.invoke("send-otp", {
-        body: { email },
-      });
+      // Send OTP via API
+      const apiUrl = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
 
-      if (sendError) {
-        // Log the code for testing if edge function fails
-        console.log(
-          "⚠️ Edge function failed. New OTP code for testing:",
-          otpCode,
-        );
+      try {
+        const response = await fetch(`${apiUrl}/api/send-otp`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, code: otpCode }),
+        });
+
+        if (!response.ok) {
+          console.log("⚠️ API call failed. New OTP code for testing:", otpCode);
+          Alert.alert(
+            "Note",
+            `Email service unavailable. For testing, your code is: ${otpCode}`,
+          );
+        } else {
+          Alert.alert("Success", "A new code has been sent to your email.");
+        }
+      } catch {
+        console.log("⚠️ Email send failed. New OTP code for testing:", otpCode);
         Alert.alert(
           "Note",
           `Email service unavailable. For testing, your code is: ${otpCode}`,
         );
-      } else {
-        Alert.alert("Success", "A new code has been sent to your email.");
       }
 
       setCode("");
