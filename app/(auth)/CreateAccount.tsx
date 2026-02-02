@@ -1,5 +1,7 @@
+import { FadeInView, SlideInUpView } from "@/components/animations/reanimated";
 import KeyboardAvoidingViewWrapper from "@/components/KeyboardAvoidingViewWrapper";
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
+import { useTheme } from "@/contexts/ThemeContext";
 import { supabase } from "@/lib/Supabase";
 import { accountSchema } from "@/schemas/accountSchema";
 import { Ionicons } from "@expo/vector-icons";
@@ -19,6 +21,8 @@ import PhoneInput, { ICountry } from "react-native-international-phone-number";
 const CreateAccount = () => {
   const phoneInputRef = useRef(null);
   const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -164,14 +168,12 @@ const CreateAccount = () => {
         return;
       }
 
-      // 5. Navigate to verification screen
       setIsLoading(false);
       router.push({
         pathname: "/VerifyCode",
         params: { email },
       });
 
-      // Clear form
       setUsername("");
       setEmail("");
       setPassword("");
@@ -203,7 +205,10 @@ const CreateAccount = () => {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View className="flex flex-col items-center justify-center px-6 mb-[40px] gap-[14px]">
+          <SlideInUpView
+            delay={100}
+            className="flex flex-col items-center justify-center px-6 mb-[40px] gap-[14px]"
+          >
             <Text className="font-dm-medium text-[22px] text-neutral-800 dark:text-white">
               Getting Started! ✌️
             </Text>
@@ -211,25 +216,25 @@ const CreateAccount = () => {
               Looks like you&apos;re new to us! Create an account for a complete
               experience.
             </Text>
-          </View>
+          </SlideInUpView>
 
           <View className="px-6 w-full gap-[20px]">
-            <View className="w-full">
+            <FadeInView delay={200} className="w-full">
               <TextInput
                 className={inputClassName}
                 placeholder="Username"
                 value={username}
                 onChangeText={setUsername}
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={isDark ? "#e5e5e5" : "#9CA3AF"}
               />
               {errors.username && (
                 <Text className="text-red-500 font-mulish-medium text-xs mt-1 px-1">
                   {errors.username}
                 </Text>
               )}
-            </View>
+            </FadeInView>
             {/* Email Input */}
-            <View className="w-full">
+            <FadeInView delay={300} className="w-full">
               <TextInput
                 className={inputClassName}
                 placeholder="Email"
@@ -237,16 +242,16 @@ const CreateAccount = () => {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={isDark ? "#e5e5e5" : "#9CA3AF"}
               />
               {errors.email && (
                 <Text className="text-red-500 font-mulish-medium text-xs mt-1 px-1">
                   {errors.email}
                 </Text>
               )}
-            </View>
+            </FadeInView>
             {/* Password Input */}
-            <View className="w-full">
+            <FadeInView delay={400} className="w-full">
               <View className="relative">
                 <TextInput
                   className={inputClassName}
@@ -254,7 +259,7 @@ const CreateAccount = () => {
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry={!isPasswordVisible}
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor={isDark ? "#e5e5e5" : "#9CA3AF"}
                 />
                 <TouchableOpacity
                   className="absolute right-4 top-1/2 -translate-y-1/2"
@@ -263,7 +268,7 @@ const CreateAccount = () => {
                   <Ionicons
                     name={isPasswordVisible ? "eye-off" : "eye"}
                     size={20}
-                    color="#6b7280"
+                    color={isDark ? "#e5e5e5" : "#6b7280"}
                   />
                 </TouchableOpacity>
               </View>
@@ -272,9 +277,9 @@ const CreateAccount = () => {
                   {errors.password}
                 </Text>
               )}
-            </View>
+            </FadeInView>
             {/* Phone Number Input */}
-            <View className="w-full">
+            <FadeInView delay={500} className="w-full">
               <PhoneInput
                 ref={phoneInputRef}
                 value={phoneNumber}
@@ -286,9 +291,13 @@ const CreateAccount = () => {
                   container: {
                     width: "100%",
                     borderWidth: 1,
-                    borderColor: errors.phoneNumber ? "#ef4444" : "#e5e7eb",
+                    borderColor: errors.phoneNumber
+                      ? "#ef4444"
+                      : isDark
+                        ? "#666687"
+                        : "#e5e7eb",
                     borderRadius: 16,
-                    backgroundColor: "white",
+                    backgroundColor: isDark ? "#4A4A6A" : "white",
                     height: 56,
                   },
                   flagContainer: {
@@ -298,7 +307,7 @@ const CreateAccount = () => {
                     flexDirection: "row",
                     width: 90,
                     borderRightWidth: 1,
-                    borderRightColor: "#e5e7eb",
+                    borderRightColor: isDark ? "#666687" : "#e5e7eb",
                     paddingHorizontal: 8,
                     overflow: "hidden",
                   },
@@ -316,12 +325,12 @@ const CreateAccount = () => {
                   callingCode: {
                     fontSize: 14,
                     fontFamily: "Mulish-Semibold",
-                    color: "#6b7280",
+                    color: isDark ? "#DCDCE4" : "#6b7280",
                     marginLeft: 4,
                   },
                   input: {
                     fontFamily: "Mulish-Semibold",
-                    color: "#6b7280",
+                    color: isDark ? "#DCDCE4" : "#6b7280",
                     fontSize: 14,
                     flex: 1,
                     paddingLeft: 12,
@@ -333,10 +342,10 @@ const CreateAccount = () => {
                   {errors.phoneNumber}
                 </Text>
               )}
-            </View>
+            </FadeInView>
           </View>
 
-          <View className="w-full px-6 mt-[124px]">
+          <FadeInView delay={600} className="w-full px-6 mt-[124px]">
             <TouchableOpacity
               className={`w-full py-4 rounded-2xl flex-row items-center justify-center ${
                 isLoading || !isFormFilled ? "bg-neutral-400" : "bg-primary-btn"
@@ -361,7 +370,7 @@ const CreateAccount = () => {
                 </Text>
               )}
             </TouchableOpacity>
-          </View>
+          </FadeInView>
         </ScrollView>
       </KeyboardAvoidingViewWrapper>
     </SafeAreaViewWrapper>
