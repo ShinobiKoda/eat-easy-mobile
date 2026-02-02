@@ -147,7 +147,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 <div align="center">
   <p>Made using Expo and React Native</p>
   
-  <a href="https://github.com/your-username/eat-easy-mobile/stargazers">
+  <a href="https://github.com/shinobikoda/eat-easy-mobile/stargazers">
     <img src="https://img.shields.io/github/stars/shinobikoda/eat-easy-mobile?style=social" alt="Stars" />
   </a>
 </div>
