@@ -35,7 +35,7 @@ const Cursor = () => {
   return (
     <Animated.View
       style={animatedStyle}
-      className="absolute bottom-3 w-[2px] h-6 bg-purple-2"
+      className="absolute bottom-3 w-[2px] h-6 bg-purple-2 dark:bg-neutral-200"
     />
   );
 };
@@ -202,13 +202,13 @@ const VerifyCode = () => {
         return (
           <View
             key={i}
-            className={`w-[54px] h-[54px] border rounded-2xl items-center justify-center bg-white ${
+            className={`w-[54px] h-[54px] border rounded-2xl items-center justify-center bg-white dark:bg-neutral-600 ${
               isFocused
                 ? "border-purple-2 dark:border-purple-5"
                 : "border-neutral-150 dark:border-neutral-600"
             }`}
           >
-            <Text className="text-2xl font-mulish-regular text-neutral-800">
+            <Text className="text-2xl font-mulish-regular text-neutral-800 dark:text-white">
               {digit}
             </Text>
             {isFocused && <Cursor />}

@@ -58,6 +58,10 @@ export default function RootLayout() {
               name="(auth)/VerifyCode"
               options={{ headerShown: false }}
             />
+            <Stack.Screen
+              name="Welcome"
+              options={{ headerShown: false }}
+            />
           </Stack>
         )}
       </ThemeProvider>

@@ -1,7 +1,6 @@
 import { SlideInUpView } from "@/components/animations/reanimated";
 import PrimaryButton from "@/components/PrimaryButton";
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
-import ThemeButton from "@/components/ThemeButton";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Text, View } from "react-native";
@@ -11,7 +10,6 @@ const SignInOptions = () => {
 
   return (
     <SafeAreaViewWrapper className="w-full px-6">
-      <ThemeButton className="absolute top-6 right-4 z-20" />
       <SlideInUpView delay={100} className="w-full mt-[145px]">
         <Text className="text-center font-dm-medium text-[26px] text-neutral-800 dark:text-white">
           Let&apos;s Get Started 😁
