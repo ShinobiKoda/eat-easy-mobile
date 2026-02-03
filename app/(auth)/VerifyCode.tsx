@@ -1,17 +1,43 @@
+import { FadeInView, SlideInUpView } from "@/components/animations/reanimated";
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
 import { supabase } from "@/lib/Supabase";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Pressable,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Pressable, Text, TextInput, View } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
+
+const Cursor = () => {
+  const opacity = useSharedValue(0);
+
+  useEffect(() => {
+    opacity.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 500 }),
+        withTiming(0, { duration: 500 }),
+      ),
+      -1,
+      true,
+    );
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
+
+  return (
+    <Animated.View
+      style={animatedStyle}
+      className="absolute bottom-3 w-[2px] h-6 bg-purple-2"
+    />
+  );
+};
 
 const VerifyCode = () => {
   const { email } = useLocalSearchParams<{ email: string }>();
@@ -26,11 +52,21 @@ const VerifyCode = () => {
     setTimeout(() => inputRef.current?.focus(), 500);
   }, []);
 
+  // Update logic to trigger verify automatically
+  useEffect(() => {
+    if (code.length === maxLength) {
+      handleVerifyOTP();
+    }
+  }, [code]);
+
   const handlePress = () => {
     inputRef.current?.focus();
   };
 
   const handleVerifyOTP = async () => {
+    // Prevent double submission if already loading
+    if (isLoading) return;
+
     if (code.length < 4) return;
 
     setIsLoading(true);
@@ -45,8 +81,15 @@ const VerifyCode = () => {
         .single();
 
       if (error || !data) {
-        Alert.alert("Error", "Invalid or expired code. Please try again.");
-        setIsLoading(false);
+        Alert.alert("Error", "Invalid or expired code. Please try again.", [
+          {
+            text: "OK",
+            onPress: () => {
+              setCode("");
+              setIsLoading(false);
+            },
+          },
+        ]);
         return;
       }
 
@@ -62,11 +105,11 @@ const VerifyCode = () => {
         data: { email_verified: true },
       });
 
-      // Navigate to GetStarted screen
+      // Navigate to Welcome screen
       Alert.alert("Success", "Your account has been verified!", [
         {
           text: "Continue",
-          onPress: () => router.replace("/GetStarted"),
+          onPress: () => router.replace("/Welcome"),
         },
       ]);
     } catch (err) {
@@ -164,9 +207,7 @@ const VerifyCode = () => {
             <Text className="text-2xl font-mulish-regular text-neutral-800">
               {digit}
             </Text>
-            {isFocused && (
-              <View className="absolute bottom-4 w-[10px] h-0.5 bg-neutral-500 text-2xl" />
-            )}
+            {isFocused && <Cursor />}
           </View>
         );
       });
@@ -174,10 +215,18 @@ const VerifyCode = () => {
 
   return (
     <SafeAreaViewWrapper className="flex-1 px-6">
-      <View className="mt-[15px] w-[44px] h-[46px] bg-white rounded-2xl flex items-center justify-center">
-        <Ionicons name="arrow-back-outline" size={20} color="#666687" />
-      </View>
-      <View className="items-center mt-3">
+      <SlideInUpView delay={100}>
+        <View className="mt-[15px] w-[44px] h-[46px] bg-white rounded-2xl flex items-center justify-center">
+          <Ionicons
+            name="arrow-back-outline"
+            size={20}
+            color="#666687"
+            onPress={() => router.back()}
+          />
+        </View>
+      </SlideInUpView>
+
+      <SlideInUpView delay={200} className="items-center mt-3">
         <Text className="font-dm-medium text-[22px] text-neutral-800 mb-[14px]">
           Verify Code ⚡️
         </Text>
@@ -188,7 +237,7 @@ const VerifyCode = () => {
           </Text>
           . Enter the code in the box below to continue.{"\n"}
         </Text>
-      </View>
+      </SlideInUpView>
 
       <TextInput
         ref={inputRef}
@@ -200,23 +249,29 @@ const VerifyCode = () => {
         style={{ opacity: 0, position: "absolute" }}
       />
 
-      <Pressable
-        onPress={handlePress}
-        className="flex-row justify-between w-full mb-3"
-      >
-        {renderInputs()}
-      </Pressable>
+      <SlideInUpView delay={300}>
+        <Pressable
+          onPress={handlePress}
+          className="flex-row justify-between w-full mb-3"
+        >
+          {renderInputs()}
+        </Pressable>
+      </SlideInUpView>
 
-      <Pressable
-        className="p-[10px]"
-        onPress={handleResendCode}
-        disabled={isLoading}
-      >
-        <Text className="text-center text-base font-mulish-semibold text-neutral-500">
-          Didn&apos;t receive a code?{" "}
-          <Text className="text-neutral-800 font-mulish-bold text-base text-yellow-1">Resend Code</Text>
-        </Text>
-      </Pressable>
+      <FadeInView delay={600}>
+        <Pressable
+          className="p-[10px]"
+          onPress={handleResendCode}
+          disabled={isLoading}
+        >
+          <Text className="text-center text-base font-mulish-semibold text-neutral-500">
+            Didn&apos;t receive a code?{" "}
+            <Text className="text-neutral-800 font-mulish-bold text-base text-yellow-1">
+              Resend Code
+            </Text>
+          </Text>
+        </Pressable>
+      </FadeInView>
     </SafeAreaViewWrapper>
   );
 };
