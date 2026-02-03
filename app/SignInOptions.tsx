@@ -24,7 +24,7 @@ const SignInOptions = () => {
         <PrimaryButton
           text="Get Started"
           bgClass="bg-primary-btn"
-          onPress={() => router.push("/CreateAccount")}
+          onPress={() => router.push("/VerifyCode")}
         />
         <View className="w-full flex flex-row items-center justify-between">
           <View className="h-px bg-neutral-200 w-1/3"></View>

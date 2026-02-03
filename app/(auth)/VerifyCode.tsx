@@ -1,5 +1,6 @@
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
 import { supabase } from "@/lib/Supabase";
+import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -156,16 +157,15 @@ const VerifyCode = () => {
         return (
           <View
             key={i}
-            className={`w-16 h-20 border-2 rounded-2xl items-center justify-center bg-white ${
-              isFocused ? "border-neutral-800" : "border-neutral-200"
+            className={`w-[54px] h-[54px] border rounded-2xl items-center justify-center bg-white ${
+              isFocused ? "border-purple-2" : "border-neutral-150"
             }`}
           >
-            <Text className="text-2xl font-mulish-bold text-neutral-800">
+            <Text className="text-2xl font-mulish-regular text-neutral-800">
               {digit}
             </Text>
-            {/* Visual Cursor */}
             {isFocused && (
-              <View className="absolute bottom-4 w-6 h-0.5 bg-neutral-800" />
+              <View className="absolute bottom-4 w-[10px] h-0.5 bg-neutral-500 text-2xl" />
             )}
           </View>
         );
@@ -173,16 +173,20 @@ const VerifyCode = () => {
   };
 
   return (
-    <SafeAreaViewWrapper className="flex-1 px-6 justify-center">
-      <View className="items-center mb-10">
-        <Text className="font-dm-medium text-2xl text-neutral-800 mb-2">
-          Verify your Email 📩
+    <SafeAreaViewWrapper className="flex-1 px-6">
+      <View className="mt-[15px] w-[44px] h-[46px] bg-white rounded-2xl flex items-center justify-center">
+        <Ionicons name="arrow-back-outline" size={20} color="#666687" />
+      </View>
+      <View className="items-center mt-3">
+        <Text className="font-dm-medium text-[22px] text-neutral-800 mb-[14px]">
+          Verify Code ⚡️
         </Text>
-        <Text className="font-mulish-medium text-neutral-500 text-center">
-          We sent a 4-digit code to{"\n"}
-          <Text className="text-neutral-800 font-mulish-bold">
+        <Text className="font-mulish-medium text-neutral-600 text-base text-center">
+          We just sent a 4-digit verification code to{" "}
+          <Text className="text-neutral-700 font-mulish-bold text-base">
             {email || "your email"}
           </Text>
+          . Enter the code in the box below to continue.{"\n"}
         </Text>
       </View>
 
@@ -196,43 +200,21 @@ const VerifyCode = () => {
         style={{ opacity: 0, position: "absolute" }}
       />
 
-      {/* Visual Boxes */}
       <Pressable
         onPress={handlePress}
-        className="flex-row justify-between w-full mb-10"
+        className="flex-row justify-between w-full mb-3"
       >
         {renderInputs()}
       </Pressable>
 
-      <TouchableOpacity
-        onPress={handleVerifyOTP}
-        disabled={code.length < 4 || isLoading}
-        className={`py-4 rounded-2xl w-full flex-row items-center justify-center ${
-          code.length === 4 && !isLoading ? "bg-neutral-800" : "bg-neutral-200"
-        }`}
-      >
-        {isLoading ? (
-          <>
-            <ActivityIndicator size="small" color="white" />
-            <Text className="text-white text-center font-mulish-bold text-base ml-2">
-              Verifying...
-            </Text>
-          </>
-        ) : (
-          <Text className="text-white text-center font-mulish-bold text-base">
-            Verify & Continue
-          </Text>
-        )}
-      </TouchableOpacity>
-
       <Pressable
-        className="mt-6"
+        className="p-[10px]"
         onPress={handleResendCode}
         disabled={isLoading}
       >
-        <Text className="text-center font-mulish-semibold text-neutral-500">
+        <Text className="text-center text-base font-mulish-semibold text-neutral-500">
           Didn&apos;t receive a code?{" "}
-          <Text className="text-neutral-800">Resend</Text>
+          <Text className="text-neutral-800 font-mulish-bold text-base text-yellow-1">Resend Code</Text>
         </Text>
       </Pressable>
     </SafeAreaViewWrapper>
