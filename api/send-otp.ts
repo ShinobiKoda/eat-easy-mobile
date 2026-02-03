@@ -37,7 +37,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Sir-P Support <auth@sir-p.tech>",
+        from: "Eat Easy Mobile <auth@sir-p.tech>",
         to: [email],
         subject: `${code} is your verification code`,
         html: `
@@ -56,7 +56,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               </p>
               
               <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb; text-align: center;">
-                <span style="color: #374151; font-weight: 600; font-size: 14px;">Sir-P.tech</span>
+                <span style="color: #374151; font-weight: 600; font-size: 14px;">Eat Easy</span>
               </div>
             </div>
           </div>

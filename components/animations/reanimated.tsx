@@ -1,13 +1,14 @@
 import React from "react";
 import { Pressable, StyleProp, ViewStyle } from "react-native";
 import Animated, {
+  Easing,
   FadeIn,
   FadeInLeft,
   FadeInRight,
   FadeInUp,
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
+  withTiming,
   ZoomIn,
 } from "react-native-reanimated";
 
@@ -32,10 +33,10 @@ export const ScaleOnPressView = ({
   return (
     <Pressable
       onPressIn={() => {
-        scale.value = withSpring(scaleTo, { damping: 15 });
+        scale.value = withTiming(scaleTo, { duration: 100 });
       }}
       onPressOut={() => {
-        scale.value = withSpring(1, { damping: 15 });
+        scale.value = withTiming(1, { duration: 100 });
       }}
       onPress={onPress}
       {...rest}
@@ -79,7 +80,9 @@ export const SlideInUpView = ({
   style,
 }: AnimationProps) => (
   <Animated.View
-    entering={FadeInUp.delay(delay).duration(duration).springify().damping(12)}
+    entering={FadeInUp.delay(delay)
+      .duration(duration)
+      .easing(Easing.out(Easing.quad))}
     className={className}
     style={style}
   >
@@ -97,8 +100,7 @@ export const SlideInLeftView = ({
   <Animated.View
     entering={FadeInLeft.delay(delay)
       .duration(duration)
-      .springify()
-      .damping(12)}
+      .easing(Easing.out(Easing.quad))}
     className={className}
     style={style}
   >
@@ -116,8 +118,7 @@ export const SlideInRightView = ({
   <Animated.View
     entering={FadeInRight.delay(delay)
       .duration(duration)
-      .springify()
-      .damping(12)}
+      .easing(Easing.out(Easing.quad))}
     className={className}
     style={style}
   >
@@ -133,7 +134,9 @@ export const PopInView = ({
   style,
 }: AnimationProps) => (
   <Animated.View
-    entering={ZoomIn.delay(delay).duration(duration).springify()}
+    entering={ZoomIn.delay(delay)
+      .duration(duration)
+      .easing(Easing.out(Easing.quad))}
     className={className}
     style={style}
   >
