@@ -1,3 +1,4 @@
+import { SlideInUpView } from "@/components/animations/reanimated";
 import PrimaryButton from "@/components/PrimaryButton";
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
 import ThemeButton from "@/components/ThemeButton";
@@ -11,7 +12,7 @@ const SignInOptions = () => {
   return (
     <SafeAreaViewWrapper className="w-full px-6">
       <ThemeButton className="absolute top-6 right-4 z-20" />
-      <View className="w-full mt-[145px]">
+      <SlideInUpView delay={100} className="w-full mt-[145px]">
         <Text className="text-center font-dm-medium text-[26px] text-neutral-800 dark:text-white">
           Let&apos;s Get Started 😁
         </Text>
@@ -19,8 +20,8 @@ const SignInOptions = () => {
           Sign up or login into to have a full digital experience in our
           restaurant
         </Text>
-      </View>
-      <View className="mt-[56px] flex flex-col gap-3">
+      </SlideInUpView>
+      <SlideInUpView delay={300} className="mt-[56px] flex flex-col gap-3">
         <PrimaryButton
           text="Get Started"
           bgClass="bg-primary-btn"
@@ -43,7 +44,7 @@ const SignInOptions = () => {
           bgClass="bg-white dark:bg-neutral-800 dark:border dark:border-purple-3"
           imageSource={require("@/assets/images/gmail-icon.png")}
         />
-      </View>
+      </SlideInUpView>
     </SafeAreaViewWrapper>
   );
 };
