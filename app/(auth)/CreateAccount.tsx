@@ -5,6 +5,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { supabase } from "@/lib/Supabase";
 import { accountSchema } from "@/schemas/accountSchema";
 import { Ionicons } from "@expo/vector-icons";
+import { getLocales } from "expo-localization";
 import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
@@ -17,6 +18,37 @@ import {
   View,
 } from "react-native";
 import PhoneInput, { ICountry } from "react-native-international-phone-number";
+
+interface PasswordRequirementProps {
+  label: string;
+  isMet: boolean;
+  isDark: boolean;
+}
+
+const PasswordRequirement = ({
+  label,
+  isMet,
+  isDark,
+}: PasswordRequirementProps) => (
+  <View className="flex-row items-center gap-2 mt-1">
+    <Ionicons
+      name={isMet ? "checkmark-circle" : "ellipse-outline"}
+      size={16}
+      color={isMet ? "#10B981" : isDark ? "#666687" : "#9CA3AF"}
+    />
+    <Text
+      className={`text-xs font-mulish-medium ${
+        isMet
+          ? "text-emerald-500"
+          : isDark
+            ? "text-neutral-400"
+            : "text-neutral-500"
+      }`}
+    >
+      {label}
+    </Text>
+  </View>
+);
 
 const CreateAccount = () => {
   const phoneInputRef = useRef(null);
@@ -32,6 +64,26 @@ const CreateAccount = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+
+  // Auto-detect user region
+  React.useEffect(() => {
+    const locales = getLocales();
+    const regionCode = locales[0]?.regionCode;
+    // We let the PhoneInput handle matching the region code via defaultCountry if we could,
+    // but since we need to pass selectedCountry object if we want to control it fully,
+    // passing defaultCountry prop is the standard way with this library to set initial flag.
+  }, []);
+
+  const passwordRequirements = [
+    { label: "At least 8 characters", isMet: password.length >= 8 },
+    { label: "At least 1 lowercase letter", isMet: /[a-z]/.test(password) },
+    { label: "At least 1 uppercase letter", isMet: /[A-Z]/.test(password) },
+    { label: "At least 1 number", isMet: /[0-9]/.test(password) },
+    {
+      label: "At least 1 special character",
+      isMet: /[^A-Za-z0-9]/.test(password),
+    },
+  ];
 
   function handleSelectedCountry(country: ICountry) {
     setSelectedCountry(country);
@@ -272,7 +324,21 @@ const CreateAccount = () => {
                   />
                 </TouchableOpacity>
               </View>
-              {errors.password && (
+
+              {/* Password Checklist & Errors */}
+              {password.length > 0 && (
+                <View className="mt-2 ml-1">
+                  {passwordRequirements.map((req, index) => (
+                    <PasswordRequirement
+                      key={index}
+                      label={req.label}
+                      isMet={req.isMet}
+                      isDark={isDark}
+                    />
+                  ))}
+                </View>
+              )}
+              {errors.password && password.length === 0 && (
                 <Text className="text-red-500 font-mulish-medium text-xs mt-1 px-1">
                   {errors.password}
                 </Text>
@@ -286,6 +352,7 @@ const CreateAccount = () => {
                 onChangeText={handleChangePhoneText}
                 selectedCountry={selectedCountry}
                 onChangeSelectedCountry={handleSelectedCountry}
+                defaultCountry={getLocales()[0]?.regionCode as any}
                 placeholder="Enter phone number"
                 phoneInputStyles={{
                   container: {

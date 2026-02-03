@@ -1,5 +1,6 @@
 import { FadeInView, SlideInUpView } from "@/components/animations/reanimated";
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
+import { useTheme } from "@/contexts/ThemeContext";
 import { supabase } from "@/lib/Supabase";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -40,6 +41,7 @@ const Cursor = () => {
 };
 
 const VerifyCode = () => {
+  const { theme } = useTheme();
   const { email } = useLocalSearchParams<{ email: string }>();
   const router = useRouter();
   const [code, setCode] = useState("");
@@ -201,7 +203,9 @@ const VerifyCode = () => {
           <View
             key={i}
             className={`w-[54px] h-[54px] border rounded-2xl items-center justify-center bg-white ${
-              isFocused ? "border-purple-2" : "border-neutral-150"
+              isFocused
+                ? "border-purple-2 dark:border-purple-5"
+                : "border-neutral-150 dark:border-neutral-600"
             }`}
           >
             <Text className="text-2xl font-mulish-regular text-neutral-800">
@@ -216,45 +220,44 @@ const VerifyCode = () => {
   return (
     <SafeAreaViewWrapper className="flex-1 px-6">
       <SlideInUpView delay={100}>
-        <View className="mt-[15px] w-[44px] h-[46px] bg-white rounded-2xl flex items-center justify-center">
+        <View className="mt-[15px] w-[44px] h-[46px] bg-white dark:bg-neutral-700 shadow-md rounded-2xl flex items-center justify-center">
           <Ionicons
             name="arrow-back-outline"
             size={20}
-            color="#666687"
+            color={theme === "dark" ? "#FFFFFF" : "#666687"}
             onPress={() => router.back()}
           />
         </View>
       </SlideInUpView>
 
       <SlideInUpView delay={200} className="items-center mt-3">
-        <Text className="font-dm-medium text-[22px] text-neutral-800 mb-[14px]">
+        <Text className="font-dm-medium text-[22px] text-neutral-800 dark:text-white mb-[14px]">
           Verify Code ⚡️
         </Text>
-        <Text className="font-mulish-medium text-neutral-600 text-base text-center">
+        <Text className="font-mulish-medium text-neutral-600 text-base text-center dark:text-neutral-150">
           We just sent a 4-digit verification code to{" "}
-          <Text className="text-neutral-700 font-mulish-bold text-base">
+          <Text className="text-neutral-700 font-mulish-bold text-base dark:text-neutral-150">
             {email || "your email"}
           </Text>
           . Enter the code in the box below to continue.{"\n"}
         </Text>
       </SlideInUpView>
 
-      <TextInput
-        ref={inputRef}
-        value={code}
-        onChangeText={(text) => text.length <= maxLength && setCode(text)}
-        keyboardType="number-pad"
-        textContentType="oneTimeCode"
-        autoFocus={true}
-        style={{ opacity: 0, position: "absolute" }}
-      />
-
       <SlideInUpView delay={300}>
         <Pressable
           onPress={handlePress}
-          className="flex-row justify-between w-full mb-3"
+          className="relative flex-row justify-between w-full mb-3"
         >
           {renderInputs()}
+          <TextInput
+            ref={inputRef}
+            value={code}
+            onChangeText={(text) => text.length <= maxLength && setCode(text)}
+            keyboardType="number-pad"
+            textContentType="oneTimeCode"
+            autoFocus={true}
+            className="absolute inset-0 w-full h-full opacity-0"
+          />
         </Pressable>
       </SlideInUpView>
 
@@ -264,7 +267,7 @@ const VerifyCode = () => {
           onPress={handleResendCode}
           disabled={isLoading}
         >
-          <Text className="text-center text-base font-mulish-semibold text-neutral-500">
+          <Text className="text-center text-base font-mulish-semibold text-neutral-500 dark:text-white">
             Didn&apos;t receive a code?{" "}
             <Text className="text-neutral-800 font-mulish-bold text-base text-yellow-1">
               Resend Code
