@@ -2,12 +2,12 @@ import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemeProvider, useTheme } from "../contexts/ThemeContext";
 import "../global.css";
-
 
 SplashScreen.preventAutoHideAsync();
 
@@ -28,28 +28,43 @@ export default function RootLayout() {
     }
   }, [loaded, error]);
 
-  // Keep the Providers at the top level so they don't unmount/remount
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        {(!loaded && !error) ? (
+        <StatusBar style="auto" translucent backgroundColor="transparent" />
+        {!loaded && !error ? (
           <LoadingState />
         ) : (
           <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="GetStarted" options={{ headerShown: false }} />
-            <Stack.Screen name="SignInOptions" options={{ headerShown: false }} />
-            <Stack.Screen name="(auth)/CreateAccount" options={{ headerShown: false }} />
-            <Stack.Screen name="(auth)/SignIn" options={{ headerShown: false }} />
-            <Stack.Screen name="(auth)/ForgotPassword" options={{ headerShown: false }} />
-            <Stack.Screen name="(auth)/VerifyCode" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="SignInOptions"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="(auth)/CreateAccount"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="(auth)/SignIn"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="(auth)/ForgotPassword"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="(auth)/VerifyCode"
+              options={{ headerShown: false }}
+            />
           </Stack>
-
         )}
       </ThemeProvider>
     </SafeAreaProvider>
   );
 }
+
 function LoadingState() {
   const { theme } = useTheme();
 

@@ -1,6 +1,7 @@
 import { useTheme } from "@/contexts/ThemeContext";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
+import { View } from "react-native";
 import {
   SafeAreaView,
   SafeAreaViewProps,
@@ -30,22 +31,16 @@ export function SafeAreaViewWrapper({
   const config = isDark ? dark : light;
 
   return (
-    <SafeAreaView
-      // style={[{ flex: 1 }, style]} handles the outer container
-      style={[{ flex: 1 }, style]}
-      {...rest}
+    <LinearGradient
+      colors={config.colors}
+      locations={config.locations}
+      start={{ x: 0, y: 0.5 }}
+      end={{ x: 1, y: 0.5 }}
+      style={{ flex: 1 }}
     >
-      <LinearGradient
-        colors={config.colors}
-        locations={config.locations}
-        start={{ x: 0, y: 0.5 }}
-        end={{ x: 1, y: 0.5 }}
-        // Ensure the gradient itself fills the SafeAreaView
-        style={{ flex: 1, zIndex: -10}}
-        className={`flex-1 ${className || ""}`}
-      >
-        {children}
-      </LinearGradient>
-    </SafeAreaView>
+      <SafeAreaView style={[{ flex: 1 }, style]} {...rest}>
+        <View className={`flex-1 ${className || ""}`}>{children}</View>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
