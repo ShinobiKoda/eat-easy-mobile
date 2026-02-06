@@ -75,7 +75,7 @@ const SignIn = () => {
       // Assuming a protected route wrapper handles this, but for now just clear generic state.
       setIsLoading(false);
       // Optional: Manual redirect if listener doesn't catch it immediately or if we want better UX
-      router.replace("/GetStarted");
+      router.replace("/Welcome");
     } catch (error) {
       console.error("Sign in error:", error);
       Alert.alert("Error", "Something went wrong. Please try again.");
