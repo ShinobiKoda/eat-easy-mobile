@@ -447,7 +447,7 @@ const CreateAccount = () => {
               Already have an account?
             </Text>
             <TouchableOpacity onPress={() => router.push("/SignIn")}>
-              <Text className="font-mulish-bold text-base text-orange-1">
+              <Text className="font-mulish-bold text-base text-yellow-1">
                 Sign in
               </Text>
             </TouchableOpacity>
