@@ -438,6 +438,20 @@ const CreateAccount = () => {
               )}
             </TouchableOpacity>
           </FadeInView>
+
+          <FadeInView
+            delay={800}
+            className="w-full px-6 flex-row justify-center items-center mt-4 gap-1"
+          >
+            <Text className="font-mulish-medium text-base text-neutral-600 dark:text-neutral-150">
+              Already have an account?
+            </Text>
+            <TouchableOpacity onPress={() => router.push("/SignIn")}>
+              <Text className="font-mulish-bold text-base text-orange-1">
+                Sign in
+              </Text>
+            </TouchableOpacity>
+          </FadeInView>
         </ScrollView>
       </KeyboardAvoidingViewWrapper>
     </SafeAreaViewWrapper>
