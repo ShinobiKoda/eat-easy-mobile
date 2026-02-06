@@ -11,6 +11,7 @@ interface PrimaryButtonProps {
   leftIcon?: React.ReactNode;
   imageSource?: ImageSourcePropType;
   borderClass?: string;
+  disabled?: boolean;
 }
 
 const PrimaryButton = ({
@@ -21,11 +22,15 @@ const PrimaryButton = ({
   leftIcon,
   imageSource,
   borderClass = "",
+  disabled = false,
 }: PrimaryButtonProps) => {
   return (
     <ScaleOnPressView
-      className={`px-6 py-4 w-full ${bgClass} ${borderClass} rounded-2xl`}
-      onPress={onPress}
+      className={`px-6 py-4 w-full ${bgClass} ${borderClass} rounded-2xl ${
+        disabled ? "opacity-50" : ""
+      }`}
+      onPress={disabled ? undefined : onPress}
+      disabled={disabled}
     >
       <View className="flex flex-row items-center justify-center">
         {leftIcon && <View className="mr-2">{leftIcon}</View>}

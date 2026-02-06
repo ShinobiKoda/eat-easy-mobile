@@ -15,6 +15,7 @@ import Animated, {
 interface ScaleOnPressProps extends AnimationProps {
   scaleTo?: number;
   onPress?: () => void;
+  disabled?: boolean;
 }
 
 export const ScaleOnPressView = ({
@@ -23,6 +24,7 @@ export const ScaleOnPressView = ({
   className,
   style,
   onPress,
+  disabled,
   ...rest
 }: ScaleOnPressProps) => {
   const scale = useSharedValue(1);
@@ -33,12 +35,17 @@ export const ScaleOnPressView = ({
   return (
     <Pressable
       onPressIn={() => {
-        scale.value = withTiming(scaleTo, { duration: 100 });
+        if (!disabled) {
+          scale.value = withTiming(scaleTo, { duration: 100 });
+        }
       }}
       onPressOut={() => {
-        scale.value = withTiming(1, { duration: 100 });
+        if (!disabled) {
+          scale.value = withTiming(1, { duration: 100 });
+        }
       }}
-      onPress={onPress}
+      onPress={disabled ? undefined : onPress}
+      disabled={disabled}
       {...rest}
     >
       <Animated.View style={[animatedStyle, style]} className={className}>
