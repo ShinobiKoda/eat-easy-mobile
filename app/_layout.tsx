@@ -23,7 +23,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded || error) {
-      // Small delay can help prevent the "unmounted state update" on slower devices
+      
       SplashScreen.hideAsync();
     }
   }, [loaded, error]);
