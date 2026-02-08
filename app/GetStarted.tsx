@@ -32,7 +32,7 @@ const GetStarted = () => {
         </SlideInUpView>
         <SlideInUpView delay={400} className="flex flex-col gap-[10px] mt-8">
           <PrimaryButton 
-            text="Signup later"
+            text="Sign up later"
             onPress={()=> router.push("/Welcome")}
           />
           <PrimaryButton

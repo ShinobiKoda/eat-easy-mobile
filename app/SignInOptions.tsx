@@ -13,10 +13,8 @@ const SignInOptions = () => {
 
   const handleGoogleSignIn = async () => {
     try {
-      // 1. Create the redirect URL
       const redirectUrl = Linking.createURL("/auth/callback");
 
-      // 2. Start the OAuth flow
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
@@ -28,16 +26,13 @@ const SignInOptions = () => {
       if (error) throw error;
       if (!data?.url) throw new Error("No authentication URL returned");
 
-      // 3. Open the browser
       const result = await WebBrowser.openAuthSessionAsync(
         data.url,
         redirectUrl,
       );
 
-      // 4. Handle the result
       if (result.type === "success" && result.url) {
         const extract = (url: string, key: string) => {
-          // Matches "key=value" followed by & or end of string
           const regex = new RegExp(`${key}=([^&]*)`);
           const match = url.match(regex);
           return match ? match[1] : null;
@@ -47,7 +42,6 @@ const SignInOptions = () => {
         const refresh_token = extract(result.url, "refresh_token");
 
         if (access_token && refresh_token) {
-          // 5. Create the session in Supabase
           const { error: sessionError } = await supabase.auth.setSession({
             access_token,
             refresh_token,
@@ -58,7 +52,6 @@ const SignInOptions = () => {
             return;
           }
 
-          // 6. Navigate to your app
           router.replace("/Welcome");
           return;
         }
