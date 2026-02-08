@@ -2,19 +2,21 @@ import { BlurView } from "expo-blur";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { SafeAreaViewWrapper } from "../SafeAreaViewWrapper";
-import Header from "./Header";
+import Header, { HeaderProps } from "./Header";
 import Sidebar from "./Sidebar";
 
-interface AppLayoutProps {
+interface AppLayoutProps extends Omit<
+  HeaderProps,
+  "showSideBar" | "openSideBar"
+> {
   children: React.ReactNode;
-  title?: string;
-  showMenuButton?: boolean;
 }
 
 const AppLayout = ({
   children,
   title = "Eat Easy",
   showMenuButton = true,
+  ...headerProps
 }: AppLayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -34,6 +36,7 @@ const AppLayout = ({
           showMenuButton={showMenuButton}
           openSideBar={toggleSidebar}
           showSideBar={isSidebarOpen}
+          {...headerProps}
         />
         <View style={styles.content}>{children}</View>
 
@@ -70,7 +73,7 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     left: 0,
-    width: "75%", // Adjust width as needed
+    width: "65%", // Adjust width as needed
     maxWidth: 300,
     zIndex: 100,
   },

@@ -9,7 +9,7 @@ const Welcome = () => {
   const router = useRouter();
 
   return (
-    <AppLayout title="Welcome" showMenuButton={true}>
+    <AppLayout title="" showMenuButton={true} locationIcon={false}>
       <View className="flex-1 px-6 justify-center items-center">
         <SlideInUpView delay={100} className="items-center">
           <View className="w-24 h-24 bg-green-100 rounded-full items-center justify-center mb-6">
