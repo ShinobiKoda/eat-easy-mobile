@@ -1,6 +1,12 @@
 import { BlurView } from "expo-blur";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  SlideInLeft,
+  SlideOutLeft,
+} from "react-native-reanimated";
 import { SafeAreaViewWrapper } from "../SafeAreaViewWrapper";
 import Header, { HeaderProps } from "./Header";
 import Sidebar from "./Sidebar";
@@ -41,17 +47,27 @@ const AppLayout = ({
         <View style={styles.content}>{children}</View>
 
         {isSidebarOpen && (
-          <View style={StyleSheet.absoluteFill}>
-            <Pressable style={StyleSheet.absoluteFill} onPress={closeSidebar}>
-              <BlurView
-                intensity={20}
-                tint="dark"
-                style={StyleSheet.absoluteFill}
-              />
-            </Pressable>
-            <View style={styles.sidebarContainer}>
+          <View style={[StyleSheet.absoluteFill, { zIndex: 100 }]}>
+            <Animated.View
+              entering={FadeIn}
+              exiting={FadeOut}
+              style={StyleSheet.absoluteFill}
+            >
+              <Pressable style={StyleSheet.absoluteFill} onPress={closeSidebar}>
+                <BlurView
+                  intensity={20}
+                  tint="dark"
+                  style={StyleSheet.absoluteFill}
+                />
+              </Pressable>
+            </Animated.View>
+            <Animated.View
+              entering={SlideInLeft}
+              exiting={SlideOutLeft}
+              style={styles.sidebarContainer}
+            >
               <Sidebar onClose={closeSidebar} />
-            </View>
+            </Animated.View>
           </View>
         )}
       </View>
