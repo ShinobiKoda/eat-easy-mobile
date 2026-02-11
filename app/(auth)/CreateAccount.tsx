@@ -161,8 +161,6 @@ const CreateAccount = () => {
         return;
       }
 
-      // Check if user is truly new or existing based on creation time
-      // 60 seconds buffer: if created > 60s ago, it's an existing account
       const isExistingUser =
         data?.user?.created_at &&
         new Date(data.user.created_at).getTime() < Date.now() - 60000;
@@ -183,9 +181,10 @@ const CreateAccount = () => {
         return;
       }
 
-      // If NOT existing user, but we have a session, we still want to enforce OTP verification
-      // so we do NOT redirect to Welcome here anymore.
-      // We proceed to generate and send OTP.
+      // Sign out immediately to prevent the auth redirect from
+      // sending unverified users to the Welcome page.
+      // We'll sign them back in after OTP verification.
+      await supabase.auth.signOut();
 
       // 2. Generate 4-digit OTP
       const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
@@ -235,7 +234,7 @@ const CreateAccount = () => {
                 onPress: () => {
                   router.push({
                     pathname: "/VerifyCode",
-                    params: { email },
+                    params: { email, password },
                   });
                 },
               },
@@ -269,7 +268,7 @@ const CreateAccount = () => {
       setIsLoading(false);
       router.push({
         pathname: "/VerifyCode",
-        params: { email },
+        params: { email, password },
       });
 
       setUsername("");

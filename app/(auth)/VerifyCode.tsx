@@ -42,7 +42,10 @@ const Cursor = () => {
 
 const VerifyCode = () => {
   const { theme } = useTheme();
-  const { email } = useLocalSearchParams<{ email: string }>();
+  const { email, password } = useLocalSearchParams<{
+    email: string;
+    password?: string;
+  }>();
   const router = useRouter();
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -102,7 +105,25 @@ const VerifyCode = () => {
         .eq("email", email)
         .eq("code", code);
 
-      // Update user metadata to mark as verified (optional)
+      // Sign back in (user was signed out after signup to prevent premature redirect)
+      if (password) {
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (signInError) {
+          console.error("Sign-in after verification error:", signInError);
+          Alert.alert(
+            "Error",
+            "Verification succeeded but sign-in failed. Please sign in manually.",
+          );
+          setIsLoading(false);
+          router.replace("/(auth)/SignIn");
+          return;
+        }
+      }
+
+      // Update user metadata to mark as verified
       await supabase.auth.updateUser({
         data: { email_verified: true },
       });

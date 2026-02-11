@@ -59,16 +59,20 @@ export default function RootLayout() {
       segments[0] === "SignInOptions" ||
       segments.length === 0;
 
-    if (session && (inAuthGroup || isPublicRoute)) {
-      // Redirect authenticated users to the protected area
-      router.replace("/(protected)/Welcome");
+    if (session) {
+      const isVerified = session.user.user_metadata?.email_verified === true;
+
+      if (isVerified && (inAuthGroup || isPublicRoute)) {
+        router.replace("/(protected)/Welcome");
+      } else if (!isVerified && isPublicRoute) {
+      }
     }
   }, [session, segments, initialized, loaded]);
 
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <StatusBar style="auto" translucent backgroundColor="transparent" />
+        <StatusBar style="auto" translucent backgroundColor="transparent" hidden/>
         {!loaded && !error ? (
           <LoadingState />
         ) : (
