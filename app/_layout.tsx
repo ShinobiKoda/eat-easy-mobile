@@ -23,7 +23,6 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded || error) {
-      
       SplashScreen.hideAsync();
     }
   }, [loaded, error]);
@@ -58,10 +57,7 @@ export default function RootLayout() {
               name="(auth)/VerifyCode"
               options={{ headerShown: false }}
             />
-            <Stack.Screen
-              name="Welcome"
-              options={{ headerShown: false }}
-            />
+            <Stack.Screen name="(protected)" options={{ headerShown: false }} />
           </Stack>
         )}
       </ThemeProvider>

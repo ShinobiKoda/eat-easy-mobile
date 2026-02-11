@@ -124,7 +124,7 @@ const CreateAccount = () => {
 
     try {
       // 1. Sign up user with Supabase Auth
-      const { error: authError } = await supabase.auth.signUp({
+      const { data, error: authError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -136,10 +136,56 @@ const CreateAccount = () => {
       });
 
       if (authError) {
+        // Handle "User already registered" error explicitly if Supabase returns it
+        if (
+          authError.message.includes("already registered") ||
+          authError.status === 422
+        ) {
+          Alert.alert(
+            "Account Exists",
+            "This email is already registered. Please sign in.",
+            [
+              {
+                text: "Go to Sign In",
+                onPress: () => router.push("/SignIn"),
+              },
+              { text: "Cancel", style: "cancel" },
+            ],
+          );
+          setIsLoading(false);
+          return;
+        }
+
         Alert.alert("Error", authError.message);
         setIsLoading(false);
         return;
       }
+
+      // Check if user is truly new or existing based on creation time
+      // 60 seconds buffer: if created > 60s ago, it's an existing account
+      const isExistingUser =
+        data?.user?.created_at &&
+        new Date(data.user.created_at).getTime() < Date.now() - 60000;
+
+      if (isExistingUser) {
+        Alert.alert(
+          "Account Exists",
+          "This email is already registered. Please sign in.",
+          [
+            {
+              text: "Go to Sign In",
+              onPress: () => router.push("/SignIn"),
+            },
+            { text: "Cancel", style: "cancel" },
+          ],
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      // If NOT existing user, but we have a session, we still want to enforce OTP verification
+      // so we do NOT redirect to Welcome here anymore.
+      // We proceed to generate and send OTP.
 
       // 2. Generate 4-digit OTP
       const otpCode = Math.floor(1000 + Math.random() * 9000).toString();

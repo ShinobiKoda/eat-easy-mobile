@@ -111,7 +111,7 @@ const VerifyCode = () => {
       Alert.alert("Success", "Your account has been verified!", [
         {
           text: "Continue",
-          onPress: () => router.replace("/Welcome"),
+          onPress: () => router.replace("/(protected)/Welcome"),
         },
       ]);
     } catch (err) {
