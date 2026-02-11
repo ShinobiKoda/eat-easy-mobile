@@ -1,13 +1,16 @@
+import { supabase } from "@/lib/Supabase";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 
 interface SidebarProps {
   onClose?: () => void;
 }
 
 const Sidebar = ({ onClose }: SidebarProps) => {
+  const router = useRouter();
   const menuItems = [
     { icon: "person-outline", label: "Profile" },
     { icon: "cart-outline", label: "Orders" },
@@ -15,6 +18,18 @@ const Sidebar = ({ onClose }: SidebarProps) => {
     { icon: "settings-outline", label: "Settings" },
     { icon: "help-circle-outline", label: "Help & Support" },
   ];
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      if (onClose) onClose();
+      router.replace("/(auth)/SignIn");
+    } catch (error) {
+      console.error("Error logging out:", error);
+      Alert.alert("Error", "Failed to log out. Please try again.");
+    }
+  };
 
   return (
     <LinearGradient
@@ -39,6 +54,13 @@ const Sidebar = ({ onClose }: SidebarProps) => {
               <Text style={styles.menuText}>{item.label}</Text>
             </Pressable>
           ))}
+
+          <View style={styles.divider} />
+
+          <Pressable onPress={handleLogout} style={styles.menuItem}>
+            <Ionicons name="log-out-outline" size={24} color="#fff" />
+            <Text style={styles.menuText}>Log Out</Text>
+          </Pressable>
         </View>
       </View>
     </LinearGradient>
@@ -86,5 +108,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginLeft: 16,
     fontFamily: "Mulish-Medium", // Ensure this font exists or use system font
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    marginVertical: 10,
+    marginBottom: 24,
   },
 });

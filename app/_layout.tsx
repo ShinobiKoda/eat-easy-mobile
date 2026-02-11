@@ -1,9 +1,10 @@
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
+import { supabase } from "@/lib/Supabase";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemeProvider, useTheme } from "../contexts/ThemeContext";
@@ -12,6 +13,11 @@ import "../global.css";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const [session, setSession] = useState<any>(null);
+  const [initialized, setInitialized] = useState(false);
+  const segments = useSegments() as string[];
+  const router = useRouter();
+
   const [loaded, error] = useFonts({
     "Mulish-Regular": require("../assets/fonts/Mulish-Regular.ttf"),
     "Mulish-Medium": require("../assets/fonts/Mulish-Medium.ttf"),
@@ -22,10 +28,42 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
+    // Check initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setInitialized(true);
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
     if (loaded || error) {
       SplashScreen.hideAsync();
     }
   }, [loaded, error]);
+
+  useEffect(() => {
+    if (!initialized || !loaded) return;
+
+    const inAuthGroup = segments[0] === "(auth)";
+    const isPublicRoute =
+      segments[0] === "GetStarted" ||
+      segments[0] === "SignInOptions" ||
+      segments.length === 0;
+
+    if (session && (inAuthGroup || isPublicRoute)) {
+      // Redirect authenticated users to the protected area
+      router.replace("/(protected)/Welcome");
+    }
+  }, [session, segments, initialized, loaded]);
 
   return (
     <SafeAreaProvider>
