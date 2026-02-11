@@ -123,75 +123,15 @@ const CreateAccount = () => {
     setIsLoading(true);
 
     try {
-      // 1. Sign up user with Supabase Auth
-      const { data, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            username,
-            phone: phoneNumber,
-          },
-        },
-      });
-
-      if (authError) {
-        // Handle "User already registered" error explicitly if Supabase returns it
-        if (
-          authError.message.includes("already registered") ||
-          authError.status === 422
-        ) {
-          Alert.alert(
-            "Account Exists",
-            "This email is already registered. Please sign in.",
-            [
-              {
-                text: "Go to Sign In",
-                onPress: () => router.push("/SignIn"),
-              },
-              { text: "Cancel", style: "cancel" },
-            ],
-          );
-          setIsLoading(false);
-          return;
-        }
-
-        Alert.alert("Error", authError.message);
-        setIsLoading(false);
-        return;
-      }
-
-      const isExistingUser =
-        data?.user?.created_at &&
-        new Date(data.user.created_at).getTime() < Date.now() - 60000;
-
-      if (isExistingUser) {
-        Alert.alert(
-          "Account Exists",
-          "This email is already registered. Please sign in.",
-          [
-            {
-              text: "Go to Sign In",
-              onPress: () => router.push("/SignIn"),
-            },
-            { text: "Cancel", style: "cancel" },
-          ],
-        );
-        setIsLoading(false);
-        return;
-      }
-
-      // Sign out immediately to prevent the auth redirect from
-      // sending unverified users to the Welcome page.
-      // We'll sign them back in after OTP verification.
-      await supabase.auth.signOut();
-
-      // 2. Generate 4-digit OTP
+      // 1. Generate 4-digit OTP
       const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
 
-      // 3. Store OTP in database with expiration (10 minutes)
+      // 2. Store OTP in database with expiration (10 minutes)
       const expiresAt = new Date();
       expiresAt.setMinutes(expiresAt.getMinutes() + 10);
+
+      // Delete any old OTPs for this email first
+      await supabase.from("otp_verifications").delete().eq("email", email);
 
       const { error: otpError } = await supabase
         .from("otp_verifications")
@@ -213,6 +153,13 @@ const CreateAccount = () => {
       // 4. Send OTP via API
       const apiUrl = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
 
+      const navigateToVerify = () => {
+        router.push({
+          pathname: "/VerifyCode",
+          params: { email, password, username, phone: phoneNumber },
+        });
+      };
+
       try {
         const response = await fetch(`${apiUrl}/api/send-otp`, {
           method: "POST",
@@ -223,53 +170,28 @@ const CreateAccount = () => {
         });
 
         if (!response.ok) {
-          // Log the code for testing if API fails
           console.log("⚠️ API call failed. OTP code for testing:", otpCode);
           Alert.alert(
             "Note",
             `Email service unavailable. For testing, your code is: ${otpCode}`,
-            [
-              {
-                text: "Continue",
-                onPress: () => {
-                  router.push({
-                    pathname: "/VerifyCode",
-                    params: { email, password },
-                  });
-                },
-              },
-            ],
+            [{ text: "Continue", onPress: navigateToVerify }],
           );
           setIsLoading(false);
           return;
         }
       } catch {
-        // Log the code for testing if fetch fails
         console.log("⚠️ Email send failed. OTP code for testing:", otpCode);
         Alert.alert(
           "Note",
           `Email service unavailable. For testing, your code is: ${otpCode}`,
-          [
-            {
-              text: "Continue",
-              onPress: () => {
-                router.push({
-                  pathname: "/VerifyCode",
-                  params: { email },
-                });
-              },
-            },
-          ],
+          [{ text: "Continue", onPress: navigateToVerify }],
         );
         setIsLoading(false);
         return;
       }
 
       setIsLoading(false);
-      router.push({
-        pathname: "/VerifyCode",
-        params: { email, password },
-      });
+      navigateToVerify();
 
       setUsername("");
       setEmail("");

@@ -42,9 +42,11 @@ const Cursor = () => {
 
 const VerifyCode = () => {
   const { theme } = useTheme();
-  const { email, password } = useLocalSearchParams<{
+  const { email, password, username, phone } = useLocalSearchParams<{
     email: string;
     password?: string;
+    username?: string;
+    phone?: string;
   }>();
   const router = useRouter();
   const [code, setCode] = useState("");
@@ -105,28 +107,48 @@ const VerifyCode = () => {
         .eq("email", email)
         .eq("code", code);
 
-      // Sign back in (user was signed out after signup to prevent premature redirect)
+      // Now create the Supabase account (deferred from signup)
       if (password) {
-        const { error: signInError } = await supabase.auth.signInWithPassword({
+        const { error: signUpError } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            data: {
+              username: username || "",
+              phone: phone || "",
+              email_verified: true,
+            },
+          },
         });
-        if (signInError) {
-          console.error("Sign-in after verification error:", signInError);
-          Alert.alert(
-            "Error",
-            "Verification succeeded but sign-in failed. Please sign in manually.",
-          );
-          setIsLoading(false);
-          router.replace("/(auth)/SignIn");
-          return;
+
+        if (signUpError) {
+          // If user already exists, try signing in instead
+          if (
+            signUpError.message.includes("already registered") ||
+            signUpError.status === 422
+          ) {
+            const { error: signInError } =
+              await supabase.auth.signInWithPassword({ email, password });
+            if (signInError) {
+              Alert.alert(
+                "Error",
+                "Account creation failed. Please try signing in.",
+              );
+              setIsLoading(false);
+              router.replace("/(auth)/SignIn");
+              return;
+            }
+            // Update metadata after sign-in
+            await supabase.auth.updateUser({
+              data: { email_verified: true },
+            });
+          } else {
+            Alert.alert("Error", signUpError.message);
+            setIsLoading(false);
+            return;
+          }
         }
       }
-
-      // Update user metadata to mark as verified
-      await supabase.auth.updateUser({
-        data: { email_verified: true },
-      });
 
       // Navigate to Welcome screen
       Alert.alert("Success", "Your account has been verified!", [
