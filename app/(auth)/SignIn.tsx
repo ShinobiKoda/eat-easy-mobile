@@ -1,10 +1,13 @@
 import { FadeInView, SlideInUpView } from "@/components/animations/reanimated";
 import KeyboardAvoidingViewWrapper from "@/components/KeyboardAvoidingViewWrapper";
+import PrimaryButton from "@/components/PrimaryButton";
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
 import { useTheme } from "@/contexts/ThemeContext";
 import { supabase } from "@/lib/Supabase";
 import { Ionicons } from "@expo/vector-icons";
+import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -80,6 +83,58 @@ const SignIn = () => {
 
   const inputClassName =
     "border border-neutral-150 font-mulish-semibold text-neutral-500 text-sm rounded-2xl bg-white px-4 py-4 w-full dark:bg-neutral-700 dark:border-neutral-600 dark:text-neutral-200 dark:placeholder:text-neutral-200";
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const redirectUrl = Linking.createURL("/auth/callback");
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: redirectUrl,
+          skipBrowserRedirect: true,
+        },
+      });
+
+      if (error) throw error;
+      if (!data?.url) throw new Error("No authentication URL returned");
+
+      const result = await WebBrowser.openAuthSessionAsync(
+        data.url,
+        redirectUrl,
+      );
+
+      if (result.type === "success" && result.url) {
+        const extract = (url: string, key: string) => {
+          const regex = new RegExp(`${key}=([^&]*)`);
+          const match = url.match(regex);
+          return match ? match[1] : null;
+        };
+
+        const access_token = extract(result.url, "access_token");
+        const refresh_token = extract(result.url, "refresh_token");
+
+        if (access_token && refresh_token) {
+          const { error: sessionError } = await supabase.auth.setSession({
+            access_token,
+            refresh_token,
+          });
+
+          if (sessionError) {
+            Alert.alert("Session Error", sessionError.message);
+            return;
+          }
+
+          router.replace("/(protected)/Welcome");
+          return;
+        }
+
+        Alert.alert("Login Error", "Tokens missing from URL.");
+      }
+    } catch (error: any) {
+      Alert.alert("Error", error.message);
+    }
+  };
 
   const isFormFilled = email && password;
 
@@ -189,6 +244,22 @@ const SignIn = () => {
             </TouchableOpacity>
           </FadeInView>
 
+          <FadeInView delay={450} className="w-full px-6 mt-6">
+            <View className="w-full flex flex-row items-center justify-between mb-4">
+              <View className="h-px bg-neutral-200 dark:bg-neutral-600 w-[30%]" />
+              <Text className="font-mulish-regular text-sm text-neutral-500 dark:text-neutral-300">
+                Or sign in with
+              </Text>
+              <View className="h-px bg-neutral-200 dark:bg-neutral-600 w-[30%]" />
+            </View>
+            <PrimaryButton
+              text="Continue with Google"
+              textClass="text-purple-2 dark:text-purple-5"
+              bgClass="bg-white dark:bg-neutral-800 dark:border dark:border-purple-3"
+              imageSource={require("@/assets/images/gmail-icon.png")}
+              onPress={handleGoogleSignIn}
+            />
+          </FadeInView>
           <FadeInView
             delay={500}
             className="w-full px-6 flex-row justify-center items-center mt-4 gap-1"

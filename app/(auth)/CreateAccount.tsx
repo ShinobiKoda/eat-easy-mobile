@@ -123,7 +123,66 @@ const CreateAccount = () => {
     setIsLoading(true);
 
     try {
-      // 1. Generate 4-digit OTP
+      // 1. Check if email is already registered
+      const { data: signUpData, error: signUpCheckError } =
+        await supabase.auth.signUp({
+          email,
+          password,
+        });
+
+      // Always sign out immediately to prevent any session from persisting
+      await supabase.auth.signOut();
+
+      if (signUpCheckError) {
+        if (
+          signUpCheckError.message.includes("already registered") ||
+          signUpCheckError.status === 422
+        ) {
+          Alert.alert(
+            "Account Exists",
+            "This email has already been used to sign up. Please sign in instead.",
+            [
+              {
+                text: "Go to Sign In",
+                onPress: () => router.push("/SignIn"),
+              },
+              { text: "Cancel", style: "cancel" },
+            ],
+          );
+          setIsLoading(false);
+          return;
+        }
+        Alert.alert("Error", signUpCheckError.message);
+        setIsLoading(false);
+        return;
+      }
+
+      // If identities is empty, the email already exists (e.g. Google sign-in)
+      if (
+        signUpData?.user?.identities &&
+        signUpData.user.identities.length === 0
+      ) {
+        Alert.alert(
+          "Account Exists",
+          "This email has already been used to sign in with Google. Please sign in with Google instead.",
+          [
+            {
+              text: "Go to Sign In",
+              onPress: () => router.push("/SignIn"),
+            },
+            { text: "Cancel", style: "cancel" },
+          ],
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      // User is new — the signUp above created the auth record but we signed out.
+      // We'll delete it so VerifyCode can do a clean signUp after OTP verification.
+      // (Supabase doesn't provide a client-side delete, but calling signUp again
+      //  in VerifyCode with the same email will work since the user is unconfirmed.)
+
+      // 2. Generate 4-digit OTP
       const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
 
       // 2. Store OTP in database with expiration (10 minutes)
