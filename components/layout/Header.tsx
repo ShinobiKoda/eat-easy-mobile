@@ -4,7 +4,7 @@ import {
   MenuIcon,
 } from "@/components/icons/Icons";
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, Text, useColorScheme, View } from "react-native";
 
 export interface HeaderProps {
   title?: string;
@@ -25,6 +25,9 @@ const Header = ({
   showMenuButton = false,
   openSideBar,
 }: HeaderProps) => {
+  const colorScheme = useColorScheme();
+  const menuIconColor = colorScheme === "dark" ? "white" : "black";
+
   return (
     <View className="w-full flex flex-row items-center justify-between px-6">
       <View className="flex-1 flex flex-row items-center">
@@ -42,7 +45,7 @@ const Header = ({
       </View>
       {showMenuButton && (
         <Pressable onPress={openSideBar}>
-          <MenuIcon />
+          <MenuIcon color={menuIconColor} />
         </Pressable>
       )}
     </View>
@@ -50,5 +53,3 @@ const Header = ({
 };
 
 export default Header;
-
-const styles = StyleSheet.create({});

@@ -47,7 +47,6 @@ const ConfirmationModal = ({
       onRequestClose={onCancel}
     >
       <View className="flex-1 justify-center items-center bg-black/60">
-        {/* Blur Effect for extra focus */}
         <BlurView
           intensity={20}
           tint="dark"

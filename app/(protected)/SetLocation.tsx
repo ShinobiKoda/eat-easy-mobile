@@ -1,41 +1,34 @@
-import { SlideInUpView } from "@/components/animations/reanimated";
-import { CheckmarkCircleIcon } from "@/components/icons/Icons";
 import AppLayout from "@/components/layout/AppLayout";
+import PrimaryButton from "@/components/PrimaryButton";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 
 const Welcome = () => {
   const router = useRouter();
 
   return (
     <AppLayout title="" showMenuButton={true} locationIcon={false}>
-      <View className="flex-1 px-6 justify-center items-center">
-        <SlideInUpView delay={100} className="items-center">
-          <View className="w-24 h-24 bg-green-100 rounded-full items-center justify-center mb-6">
-            <CheckmarkCircleIcon size={60} />
-          </View>
+      <View className="flex-1 px-6 flex flex-col items-center justify-center">
+        <Image
+          source={require("@/assets/images/location-icon.png")}
+          style={{ height: 70, width: 70, marginBottom: 32 }}
+        />
+        <Text className="text-center font-dm-medium text-neutral-800 text-[22px]">
+          Share your Location with us to order.
+        </Text>
+        <Text className="text-center font-mulish-medium text-neutral-600 text-base mt-[14px]">
+          Please enter your location or allow access to your location to find
+          all restaurants that are near you{" "}
+        </Text>
 
-          <Text className="font-dm-bold text-[32px] text-neutral-800 text-center mb-4">
-            Welcome to{"\n"}Eat Easy!
-          </Text>
-
-          <Text className="font-mulish-medium text-base text-neutral-600 text-center mb-10 px-4">
-            Your account has been successfully verified. You are now ready to
-            explore delicious food around you.
-          </Text>
-        </SlideInUpView>
-
-        <SlideInUpView delay={300} className="w-full">
-          <TouchableOpacity
-            className="w-full bg-primary-btn py-4 rounded-2xl items-center"
-            onPress={() => router.replace("/")} // Or navigate to Home/Dashboard
-          >
-            <Text className="text-white font-mulish-bold text-base">
-              Get Started
-            </Text>
-          </TouchableOpacity>
-        </SlideInUpView>
+        <PrimaryButton
+          text="Continue"
+          bgClass="bg-purple-2 mt-[78px]"
+          textClass="w-full text-white"
+          onPress={() => router.push("/(protected)/Restaurants")}
+        />
       </View>
     </AppLayout>
   );
