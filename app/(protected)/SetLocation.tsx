@@ -15,10 +15,10 @@ const Welcome = () => {
           source={require("@/assets/images/location-icon.png")}
           style={{ height: 70, width: 70, marginBottom: 32 }}
         />
-        <Text className="text-center font-dm-medium text-neutral-800 text-[22px]">
+        <Text className="text-center font-dm-medium text-neutral-800 text-[22px] dark:text-white ">
           Share your Location with us to order.
         </Text>
-        <Text className="text-center font-mulish-medium text-neutral-600 text-base mt-[14px]">
+        <Text className="text-center font-mulish-medium text-neutral-600 text-base mt-[14px] dark:text-neutral-150">
           Please enter your location or allow access to your location to find
           all restaurants that are near you{" "}
         </Text>
