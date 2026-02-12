@@ -1,8 +1,8 @@
 import { FadeInView, SlideInUpView } from "@/components/animations/reanimated";
+import { ArrowBackOutlineIcon } from "@/components/icons/Icons";
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
 import { useTheme } from "@/contexts/ThemeContext";
 import { supabase } from "@/lib/Supabase";
-import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, Pressable, Text, TextInput, View } from "react-native";
@@ -263,8 +263,7 @@ const VerifyCode = () => {
     <SafeAreaViewWrapper className="flex-1 px-6">
       <SlideInUpView delay={100}>
         <View className="mt-[15px] w-[44px] h-[46px] bg-white dark:bg-neutral-700 shadow-md rounded-2xl flex items-center justify-center">
-          <Ionicons
-            name="arrow-back-outline"
+          <ArrowBackOutlineIcon
             size={20}
             color={theme === "dark" ? "#FFFFFF" : "#666687"}
             onPress={() => router.back()}
@@ -311,7 +310,7 @@ const VerifyCode = () => {
         >
           <Text className="text-center text-base font-mulish-semibold text-neutral-500 dark:text-white">
             Didn&apos;t receive a code?{" "}
-            <Text className="text-neutral-800 font-mulish-bold text-base text-yellow-1">
+            <Text className="font-mulish-bold text-base text-yellow-1">
               Resend Code
             </Text>
           </Text>

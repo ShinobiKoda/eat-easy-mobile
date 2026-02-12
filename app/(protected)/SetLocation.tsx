@@ -1,6 +1,6 @@
 import { SlideInUpView } from "@/components/animations/reanimated";
+import { CheckmarkCircleIcon } from "@/components/icons/Icons";
 import AppLayout from "@/components/layout/AppLayout";
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -13,7 +13,7 @@ const Welcome = () => {
       <View className="flex-1 px-6 justify-center items-center">
         <SlideInUpView delay={100} className="items-center">
           <View className="w-24 h-24 bg-green-100 rounded-full items-center justify-center mb-6">
-            <Ionicons name="checkmark-circle" size={60} color="#10B981" />
+            <CheckmarkCircleIcon size={60} />
           </View>
 
           <Text className="font-dm-bold text-[32px] text-neutral-800 text-center mb-4">

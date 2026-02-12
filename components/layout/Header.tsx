@@ -1,4 +1,8 @@
-import { Ionicons } from "@expo/vector-icons";
+import {
+  ArrowBackIcon,
+  LocationIcon,
+  MenuIcon,
+} from "@/components/icons/Icons";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -27,18 +31,18 @@ const Header = ({
         {backButton && (
           <Pressable onPress={goBack}>
             <View className="w-[44px] h-[44px] rounded-xl flex items-center justify-center">
-              <Ionicons name="arrow-back" size={24} color="black" />
+              <ArrowBackIcon />
             </View>
           </Pressable>
         )}
         <View className="flex flex-row items-center gap-3">
-          {locationIcon && <Ionicons name="location" size={24} color="black" />}
+          {locationIcon && <LocationIcon />}
           <Text>{title}</Text>
         </View>
       </View>
       {showMenuButton && (
         <Pressable onPress={openSideBar}>
-          <Ionicons name="menu" size={24} color="black" />
+          <MenuIcon />
         </Pressable>
       )}
     </View>

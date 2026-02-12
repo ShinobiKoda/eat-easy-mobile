@@ -1,10 +1,15 @@
 import { FadeInView, SlideInUpView } from "@/components/animations/reanimated";
+import {
+  CheckmarkCircleIcon,
+  EllipseOutlineIcon,
+  EyeIcon,
+  EyeOffIcon,
+} from "@/components/icons/Icons";
 import KeyboardAvoidingViewWrapper from "@/components/KeyboardAvoidingViewWrapper";
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
 import { useTheme } from "@/contexts/ThemeContext";
 import { supabase } from "@/lib/Supabase";
 import { accountSchema } from "@/schemas/accountSchema";
-import { Ionicons } from "@expo/vector-icons";
 import { getLocales } from "expo-localization";
 import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
@@ -31,11 +36,11 @@ const PasswordRequirement = ({
   isDark,
 }: PasswordRequirementProps) => (
   <View className="flex-row items-center gap-2 mt-1">
-    <Ionicons
-      name={isMet ? "checkmark-circle" : "ellipse-outline"}
-      size={16}
-      color={isMet ? "#10B981" : isDark ? "#666687" : "#9CA3AF"}
-    />
+    {isMet ? (
+      <CheckmarkCircleIcon size={16} color="#10B981" />
+    ) : (
+      <EllipseOutlineIcon size={16} color={isDark ? "#666687" : "#9CA3AF"} />
+    )}
     <Text
       className={`text-xs font-mulish-medium ${
         isMet
@@ -177,10 +182,7 @@ const CreateAccount = () => {
         return;
       }
 
-      // User is new — the signUp above created the auth record but we signed out.
-      // We'll delete it so VerifyCode can do a clean signUp after OTP verification.
-      // (Supabase doesn't provide a client-side delete, but calling signUp again
-      //  in VerifyCode with the same email will work since the user is unconfirmed.)
+     
 
       // 2. Generate 4-digit OTP
       const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
@@ -343,11 +345,14 @@ const CreateAccount = () => {
                   className="absolute right-4 top-1/2 -translate-y-1/2"
                   onPress={() => setIsPasswordVisible(!isPasswordVisible)}
                 >
-                  <Ionicons
-                    name={isPasswordVisible ? "eye-off" : "eye"}
-                    size={20}
-                    color={isDark ? "#e5e5e5" : "#6b7280"}
-                  />
+                  {isPasswordVisible ? (
+                    <EyeOffIcon
+                      size={20}
+                      color={isDark ? "#e5e5e5" : "#6b7280"}
+                    />
+                  ) : (
+                    <EyeIcon size={20} color={isDark ? "#e5e5e5" : "#6b7280"} />
+                  )}
                 </TouchableOpacity>
               </View>
 

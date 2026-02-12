@@ -55,7 +55,7 @@ const AppLayout = ({
             >
               <Pressable style={StyleSheet.absoluteFill} onPress={closeSidebar}>
                 <BlurView
-                  intensity={20}
+                  intensity={50}
                   tint="dark"
                   style={StyleSheet.absoluteFill}
                 />
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     left: 0,
-    width: "65%", // Adjust width as needed
+    width: 260, // Adjust width as needed
     maxWidth: 300,
     zIndex: 100,
   },

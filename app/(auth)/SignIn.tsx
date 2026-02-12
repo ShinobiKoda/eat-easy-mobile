@@ -1,10 +1,10 @@
 import { FadeInView, SlideInUpView } from "@/components/animations/reanimated";
+import { EyeIcon, EyeOffIcon } from "@/components/icons/Icons";
 import KeyboardAvoidingViewWrapper from "@/components/KeyboardAvoidingViewWrapper";
 import PrimaryButton from "@/components/PrimaryButton";
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
 import { useTheme } from "@/contexts/ThemeContext";
 import { supabase } from "@/lib/Supabase";
-import { Ionicons } from "@expo/vector-icons";
 import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
@@ -193,11 +193,14 @@ const SignIn = () => {
                   className="absolute right-4 top-1/2 -translate-y-1/2"
                   onPress={() => setIsPasswordVisible(!isPasswordVisible)}
                 >
-                  <Ionicons
-                    name={isPasswordVisible ? "eye-off" : "eye"}
-                    size={20}
-                    color={isDark ? "#e5e5e5" : "#6b7280"}
-                  />
+                  {isPasswordVisible ? (
+                    <EyeOffIcon
+                      size={20}
+                      color={isDark ? "#e5e5e5" : "#6b7280"}
+                    />
+                  ) : (
+                    <EyeIcon size={20} color={isDark ? "#e5e5e5" : "#6b7280"} />
+                  )}
                 </TouchableOpacity>
               </View>
               {errors.password && (

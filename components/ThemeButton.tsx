@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { MoonIcon, SunIcon } from "@/components/icons/Icons";
 import React from "react";
 import { Pressable } from "react-native";
 import { useTheme } from "../contexts/ThemeContext";
@@ -37,9 +37,9 @@ const ThemeButton: React.FC<ThemeButtonProps> = ({
       accessibilityRole="button"
     >
       {theme === "dark" ? (
-        <Ionicons name="sunny-outline" size={size} color="#FFD700" />
+        <SunIcon size={size} color="#FFD700" />
       ) : (
-        <Ionicons name="moon-outline" size={size} color="#222" />
+        <MoonIcon size={size} color="#222" />
       )}
     </Pressable>
   );
