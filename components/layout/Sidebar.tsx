@@ -1,3 +1,4 @@
+import ConfirmationModal from "@/components/ui/ConfirmationModal";
 import { supabase } from "@/lib/Supabase";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -8,9 +9,9 @@ import {
   BookIcon,
   HelpIcon,
   LocationOutlineIcon,
+  LogOutIcon,
   MedalIcon,
   ReceiptIcon,
-  LogOutIcon
 } from "../icons/Icons";
 
 const MenuButton = ({
@@ -58,15 +59,34 @@ interface SidebarProps {
 const Sidebar = ({ onClose }: SidebarProps) => {
   const router = useRouter();
   const [activeItem, setActiveItem] = useState("Food Menu");
+  const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogout = async () => {
+  const handleLogoutClick = () => {
+    setActiveItem("Logout");
+    setLogoutModalVisible(true);
+  };
+
+  const cancelLogout = () => {
+    setLogoutModalVisible(false);
+  };
+
+  const confirmLogout = async () => {
+    setIsLoggingOut(true);
+
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+
+      setLogoutModalVisible(false);
+      setIsLoggingOut(false);
+
       if (onClose) onClose();
       router.replace("/(auth)/SignIn");
     } catch (error) {
       console.error("Error logging out:", error);
+      setIsLoggingOut(false);
+      setLogoutModalVisible(false);
       Alert.alert("Error", "Failed to log out. Please try again.");
     }
   };
@@ -132,7 +152,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
           </View>
         </View>
 
-        <View className="h-px bg-white my-9 mx-[30px]"></View>
+        <View className="h-px bg-white/20 my-9 mx-[30px]"></View>
 
         <View className="px-[30px]">
           <Text className="font-mulish-semibold text-[13px] text-neutral-150">
@@ -159,9 +179,21 @@ const Sidebar = ({ onClose }: SidebarProps) => {
             icon={LogOutIcon}
             label="Logout"
             isActive={activeItem === "Logout"}
-            onPress={() => setActiveItem("Logout")}
+            onPress={handleLogoutClick}
           />
         </View>
+
+        <ConfirmationModal
+          isVisible={isLogoutModalVisible}
+          onConfirm={confirmLogout}
+          onCancel={cancelLogout}
+          title="Log Out"
+          message="Are you sure you want to log out?"
+          confirmText="Log Out"
+          cancelText="Cancel"
+          isLoading={isLoggingOut}
+          loadingText="Logging out..."
+        />
       </View>
     </LinearGradient>
   );
