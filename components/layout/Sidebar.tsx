@@ -33,8 +33,6 @@ const Sidebar = ({ onClose }: SidebarProps) => {
 
   return (
     <LinearGradient
-      // start={{ x: 0, y: 0.5 }}
-      // end={{ x: 1, y: 0.5 }}
       colors={["#32324D", "#32324D", "#2C2C45", "#32324D"]}
       locations={[0, 0.1, 0.52, 0.9]}
       style={styles.gradient}

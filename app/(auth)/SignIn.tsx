@@ -73,7 +73,7 @@ const SignIn = () => {
       }
 
       setIsLoading(false);
-      router.replace("/(protected)/Welcome");
+      router.replace("/(protected)/SetLocation");
     } catch (error) {
       console.error("Sign in error:", error);
       Alert.alert("Error", "Something went wrong. Please try again.");
@@ -125,7 +125,7 @@ const SignIn = () => {
             return;
           }
 
-          router.replace("/(protected)/Welcome");
+          router.replace("/(protected)/SetLocation");
           return;
         }
 

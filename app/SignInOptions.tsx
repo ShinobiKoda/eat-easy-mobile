@@ -52,7 +52,7 @@ const SignInOptions = () => {
             return;
           }
 
-          router.replace("/(protected)/Welcome");
+          router.replace("/(protected)/SetLocation");
           return;
         }
 

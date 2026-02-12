@@ -63,7 +63,7 @@ export default function RootLayout() {
       const isVerified = session.user.user_metadata?.email_verified === true;
 
       if (isVerified && (inAuthGroup || isPublicRoute)) {
-        router.replace("/(protected)/Welcome");
+        router.replace("/(protected)/SetLocation");
       } else if (!isVerified && isPublicRoute) {
       }
     }

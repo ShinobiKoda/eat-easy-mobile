@@ -150,11 +150,10 @@ const VerifyCode = () => {
         }
       }
 
-      // Navigate to Welcome screen
       Alert.alert("Success", "Your account has been verified!", [
         {
           text: "Continue",
-          onPress: () => router.replace("/(protected)/Welcome"),
+          onPress: () => router.replace("/(protected)/SetLocation"),
         },
       ]);
     } catch (err) {
