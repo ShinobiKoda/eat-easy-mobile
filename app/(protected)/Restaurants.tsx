@@ -137,7 +137,7 @@ const RestaurantFinder: React.FC = () => {
             Share your Location with us to order
           </Text>
           <Text className="font-mulish-medium text-neutral-600 text-center">
-            Please enter your location or allow access to your location to find
+            Please allow access to your location to find
             all restaurants that are near you{" "}
           </Text>
         </View>
