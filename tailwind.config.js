@@ -7,6 +7,7 @@ module.exports = {
       colors: {
         "neutral-700": "#4A4A6A",
         "orange-1": "#FF7B2C",
+        "orange-5": "#FFF2EA",
         "neutral-150": "#EAEAEF",
         "yellow-1": "#FFB01D",
         "neutral-800": "#32324D",

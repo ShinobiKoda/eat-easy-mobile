@@ -15,6 +15,14 @@ export const ArrowBackIcon = ({
   <Ionicons name="arrow-back" size={size} color={color} onPress={onPress} />
 );
 
+export const ArrowForwardIcon = ({
+  size = 24,
+  color = "black",
+  onPress,
+}: IconProps) => (
+  <Ionicons name="arrow-forward" size={size} color={color} onPress={onPress} />
+);
+
 export const ArrowBackOutlineIcon = ({
   size = 24,
   color = "black",

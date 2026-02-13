@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useRouter } from "expo-router";
 
 import { fetchNearbyPlaces } from "../../lib/tomtom";
 import { Restaurant } from "../../types/restaurant";
@@ -26,6 +27,8 @@ const RestaurantFinder: React.FC = () => {
   const [selectedRestaurantId, setSelectedRestaurantId] = useState<
     string | null
   >(null);
+
+  const router = useRouter();
 
   const findFood = async () => {
     setLoading(true);
@@ -43,8 +46,11 @@ const RestaurantFinder: React.FC = () => {
       setStatus("Locating you...");
 
       // 2. Get Coords
-      const location = await Location.getCurrentPositionAsync({});
-      const { latitude, longitude } = location.coords;
+      // const location = await Location.getCurrentPositionAsync({});
+      // const { latitude, longitude } = location.coords;
+
+      const latitude = 6.6018;
+      const longitude = 3.3515;
 
       setStatus("Fetching data...");
 
@@ -108,10 +114,10 @@ const RestaurantFinder: React.FC = () => {
       <AppLayout title="" showMenuButton={true} locationIcon={false}>
         <View className="flex-1">
           <View className="mt-3 flex flex-col gap-[14px]">
-            <Text className="font-dm-medium text-[22px] text-neutral-800 text-center">
+            <Text className="font-dm-medium text-[22px] text-neutral-800 text-center dark:text-white">
               Share your Location with us to order
             </Text>
-            <Text className="font-mulish-medium text-neutral-600 text-center">
+            <Text className="font-mulish-medium text-neutral-600 text-center dark:text-neutral-150">
               Please enter your location or allow access to your location to
               find all restaurants that are near you{" "}
             </Text>
@@ -165,7 +171,7 @@ const RestaurantFinder: React.FC = () => {
         <PrimaryButton
           text="Continue"
           bgClass="bg-purple-2 my-4"
-          onPress={() => {}}
+          onPress={() => {router.push("/(protected)/Homepage")}}
         />
       </View>
     </AppLayout>

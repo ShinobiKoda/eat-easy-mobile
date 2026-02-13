@@ -26,7 +26,9 @@ const Header = ({
   openSideBar,
 }: HeaderProps) => {
   const colorScheme = useColorScheme();
-  const menuIconColor = colorScheme === "dark" ? "white" : "black";
+  const menuIconColor = colorScheme === "dark" ? "#EBEAF2" : "#3DCDCE4";
+
+  const locationIconColor = colorScheme === "dark" ? "#DCDCE4" : "#DCDCE4";
 
   return (
     <View className="w-full flex flex-row items-center justify-between px-6">
@@ -39,8 +41,8 @@ const Header = ({
           </Pressable>
         )}
         <View className="flex flex-row items-center gap-3">
-          {locationIcon && <LocationIcon />}
-          <Text>{title}</Text>
+          {locationIcon && <LocationIcon  color={locationIconColor}/>}
+          <Text className="text-neutral-500 dark:text-neutral-200 font-mulish-semibold text-base">{title}</Text>
         </View>
       </View>
       {showMenuButton && (
