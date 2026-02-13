@@ -1,6 +1,7 @@
 import PrimaryButton from "@/components/PrimaryButton";
 import { SlideInUpView } from "@/components/animations/reanimated";
 import AppLayout from "@/components/layout/AppLayout";
+import RestaurantSkeleton from "@/components/ui/RestaurantSkeleton";
 import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
 import {
@@ -47,7 +48,6 @@ const RestaurantFinder: React.FC = () => {
       setStatus("Fetching data...");
 
       // 3. CALL THE IMPORTED SERVICE
-      // We moved the fetch logic out of this file!
       const data = await fetchNearbyPlaces(latitude, longitude, "food");
 
       setRestaurants(data);
@@ -100,6 +100,35 @@ const RestaurantFinder: React.FC = () => {
     );
   };
 
+  if (loading) {
+    return (
+      <AppLayout title="" showMenuButton={true} locationIcon={false}>
+        <View className="flex-1">
+          <View className="mt-3 flex flex-col gap-[14px]">
+            <Text className="font-dm-medium text-[22px] text-neutral-800 text-center">
+              Share your Location with us to order
+            </Text>
+            <Text className="font-mulish-medium text-neutral-600 text-center">
+              Please enter your location or allow access to your location to
+              find all restaurants that are near you{" "}
+            </Text>
+          </View>
+          <View className="mt-6 flex-1">
+            {/* Show 5 skeleton items while loading */}
+            {Array.from({ length: 5 }).map((_, index) => (
+              <RestaurantSkeleton key={index} />
+            ))}
+          </View>
+          <PrimaryButton
+            text="Continue"
+            bgClass="bg-purple-2 my-4"
+            onPress={() => {}}
+          />
+        </View>
+      </AppLayout>
+    );
+  }
+
   return (
     <AppLayout title="" showMenuButton={true} locationIcon={false}>
       <View className="flex-1">
@@ -113,26 +142,20 @@ const RestaurantFinder: React.FC = () => {
           </Text>
         </View>
         <View className="mt-6 flex-1">
-          {loading ? (
-            <Text className="text-center mt-10 font-mulish-medium text-neutral-500">
-              {status}
-            </Text>
-          ) : (
-            <FlatList
-              data={restaurants}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.id}
-              contentContainerStyle={{ paddingBottom: 20 }}
-              showsVerticalScrollIndicator={false}
-              ListEmptyComponent={
-                <Text className="text-center mt-10 font-mulish-medium text-neutral-500">
-                  {status !== "Finding restaurants near you..."
-                    ? "No restaurants found."
-                    : status}
-                </Text>
-              }
-            />
-          )}
+          <FlatList
+            data={restaurants}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={{ paddingBottom: 20 }}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={
+              <Text className="text-center mt-10 font-mulish-medium text-neutral-500">
+                {status !== "Finding restaurants near you..."
+                  ? "No restaurants found."
+                  : status}
+              </Text>
+            }
+          />
         </View>
         <PrimaryButton
           text="Continue"
