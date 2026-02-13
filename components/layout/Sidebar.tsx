@@ -3,7 +3,7 @@ import { supabase } from "@/lib/Supabase";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import {
   BookIcon,
@@ -61,6 +61,21 @@ const Sidebar = ({ onClose }: SidebarProps) => {
   const [activeItem, setActiveItem] = useState("Food Menu");
   const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [displayName, setDisplayName] = useState("User");
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session?.user) {
+        const meta = session.user.user_metadata;
+        const name = meta?.username || meta?.full_name || meta?.name || "User";
+        setDisplayName(name);
+      }
+    };
+    fetchUser();
+  }, []);
 
   const handleLogoutClick = () => {
     setActiveItem("Logout");
@@ -116,7 +131,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
           />
           <View>
             <Text className="font-mulish-semibold text-base text-white">
-              Robert Fox
+              {displayName}
             </Text>
             <Pressable>
               <Text className="font-mulish-medium text-sm text-white underline">
