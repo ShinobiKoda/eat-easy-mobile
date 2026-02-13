@@ -18,6 +18,7 @@ module.exports = {
         "purple-5": "#EBEAF2",
         "neutral-200": "#DCDCE4",
         "neutral-400": "#A5A5BA",
+        "neutral-500": "#8E8EA9",
       },
       fontFamily: {
         "mulish-regular": ["Mulish-Regular"],

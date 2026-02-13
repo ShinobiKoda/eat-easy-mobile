@@ -8,6 +8,7 @@ import {
   Alert,
   FlatList,
   ListRenderItem,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -76,19 +77,21 @@ const RestaurantFinder: React.FC = () => {
       <SlideInUpView delay={index * 100}>
         <TouchableOpacity
           onPress={() => setSelectedRestaurantId(item.id)}
-          className="flex flex-row items-center justify-between p-5 bg-white shadow-md rounded-xl mb-4"
+          className="flex flex-row items-center justify-between p-5 bg-white shadow-md dark:bg-neutral-700 rounded-xl mb-4"
         >
           <View className="flex flex-col gap-3 flex-1 mr-4">
-            <Text className="font-mulish-semibold text-base text-neutral-900">
+            <Text className="font-mulish-semibold text-base text-neutral-900 dark:text-white">
               {item.poi.name}
             </Text>
-            <Text className="font-mulish-medium text-sm text-neutral-500">
+            <Text className="font-mulish-medium text-sm text-neutral-500 dark:text-neutral-300">
               {item.address.freeformAddress}
             </Text>
           </View>
           <View
             className={`w-5 h-5 rounded-full flex items-center justify-center border ${
-              isSelected ? "border-yellow-1" : "border-neutral-300 bg-white"
+              isSelected
+                ? "border-yellow-1"
+                : "border-neutral-300 dark:border-neutral-500 bg-white dark:bg-neutral-700"
             }`}
           >
             {isSelected && (
@@ -113,12 +116,14 @@ const RestaurantFinder: React.FC = () => {
               find all restaurants that are near you{" "}
             </Text>
           </View>
-          <View className="mt-6 flex-1">
-            {/* Show 5 skeleton items while loading */}
-            {Array.from({ length: 5 }).map((_, index) => (
+          <ScrollView
+            className="mt-6 flex-1"
+            showsVerticalScrollIndicator={false}
+          >
+            {Array.from({ length: 8 }).map((_, index) => (
               <RestaurantSkeleton key={index} />
             ))}
-          </View>
+          </ScrollView>
           <PrimaryButton
             text="Continue"
             bgClass="bg-purple-2 my-4"
@@ -133,12 +138,12 @@ const RestaurantFinder: React.FC = () => {
     <AppLayout title="" showMenuButton={true} locationIcon={false}>
       <View className="flex-1">
         <View className="mt-3 flex flex-col gap-[14px]">
-          <Text className="font-dm-medium text-[22px] text-neutral-800 text-center">
+          <Text className="font-dm-medium text-[22px] text-neutral-800 dark:text-white text-center">
             Share your Location with us to order
           </Text>
-          <Text className="font-mulish-medium text-neutral-600 text-center">
-            Please allow access to your location to find
-            all restaurants that are near you{" "}
+          <Text className="font-mulish-medium text-neutral-600 text-center dark:text-neutral-150">
+            Please allow access to your location to find all restaurants that
+            are near you{" "}
           </Text>
         </View>
         <View className="mt-6 flex-1">
