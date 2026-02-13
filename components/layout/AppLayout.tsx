@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
   },
   sidebarContainer: {
     position: "absolute",

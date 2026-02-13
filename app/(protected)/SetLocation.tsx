@@ -10,7 +10,7 @@ const Welcome = () => {
 
   return (
     <AppLayout title="" showMenuButton={true} locationIcon={false}>
-      <View className="flex-1 px-6 flex flex-col items-center justify-center">
+      <View className="flex-1 flex flex-col items-center justify-center">
         <Image
           source={require("@/assets/images/location-icon.png")}
           style={{ height: 70, width: 70, marginBottom: 32 }}
