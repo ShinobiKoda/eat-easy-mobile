@@ -27,3 +27,30 @@ export const fetchNearbyPlaces = async (
     throw error; 
   }
 };
+
+export const reverseGeocode = async (
+  lat: number,
+  lon: number
+): Promise<string> => {
+  const url = `https://api.tomtom.com/search/2/reverseGeocode/${lat},${lon}.json?key=${TOMTOM_API_KEY}`;
+
+  try {
+    const response = await fetch(url);
+    const json = await response.json();
+
+    if (json.addresses && json.addresses.length > 0) {
+      const address = json.addresses[0].address;
+      // Prefer street name and city, or freeformAddress
+      return (
+        address.streetName || 
+        address.municipality || 
+        address.freeformAddress || 
+        "Unknown Location"
+      );
+    }
+    return "Unknown Location";
+  } catch (error) {
+    console.error("TomTom Reverse Geocode Error:", error);
+    return "Unknown Location";
+  }
+};

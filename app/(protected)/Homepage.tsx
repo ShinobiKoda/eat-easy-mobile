@@ -1,9 +1,14 @@
-import { SlideInUpView, ScaleOnPressView } from "@/components/animations/reanimated";
+import {
+  ScaleOnPressView,
+  SlideInUpView,
+} from "@/components/animations/reanimated";
 import { ArrowForwardIcon } from "@/components/icons/Icons";
 import AppLayout from "@/components/layout/AppLayout";
 import { useTheme } from "@/contexts/ThemeContext";
+import { reverseGeocode } from "@/lib/tomtom";
 import { Image } from "expo-image";
-import React from "react";
+import * as Location from "expo-location";
+import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 
 const HomePageOptions = [
@@ -22,9 +27,31 @@ const HomePageOptions = [
 const Homepage = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const [locationName, setLocationName] = useState("Locating...");
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          setLocationName("Permission denied");
+          return;
+        }
+
+        const location = await Location.getCurrentPositionAsync({});
+        const { latitude, longitude } = location.coords;
+
+        const address = await reverseGeocode(latitude, longitude);
+        setLocationName(address);
+      } catch (error) {
+        console.error("Error fetching location:", error);
+        setLocationName("Unknown Location");
+      }
+    })();
+  }, []);
 
   return (
-    <AppLayout title="Gbam Bistro" locationIcon={true}>
+    <AppLayout title={locationName} locationIcon={true}>
       <SlideInUpView delay={100}>
         <Text className="font-dm-medium text-[22px] text-neutral-800 dark:text-white text-center mt-3">
           Let's find the perfect dish for you

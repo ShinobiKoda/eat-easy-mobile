@@ -46,11 +46,11 @@ const RestaurantFinder: React.FC = () => {
       setStatus("Locating you...");
 
       // 2. Get Coords
-      // const location = await Location.getCurrentPositionAsync({});
-      // const { latitude, longitude } = location.coords;
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
 
-      const latitude = 6.6018;
-      const longitude = 3.3515;
+      // const latitude = 6.6018;
+      // const longitude = 3.3515;
 
       setStatus("Fetching data...");
 
