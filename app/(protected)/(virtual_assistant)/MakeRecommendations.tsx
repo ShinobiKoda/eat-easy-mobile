@@ -7,6 +7,7 @@ import AppLayout from "@/components/layout/AppLayout";
 import PrimaryButton from "@/components/PrimaryButton";
 import React from "react";
 import { StyleSheet, Text, View, useColorScheme } from "react-native";
+import { useRouter } from "expo-router";
 
 const MakeRecommendations = () => {
   const colorScheme = useColorScheme();
@@ -14,6 +15,8 @@ const MakeRecommendations = () => {
   const fowardIconColor = colorScheme === "dark" ? "#FFB01D" : "#FFB01D";
 
   const calendarIconColor = colorScheme === "dark" ? "#FFD7C0" : "#FFB01D";
+
+  const router = useRouter();
 
   return (
     <AppLayout title="" backButton={true}>
@@ -58,7 +61,7 @@ const MakeRecommendations = () => {
             text="Next"
             textClass="text-white"
             bgClass="bg-purple-2"
-            onPress={() => {}}
+            onPress={() => {router.push("/(protected)/(virtual_assistant)/RecommendationFirstStep")}}
           />
         </SlideInUpView>
       </View>

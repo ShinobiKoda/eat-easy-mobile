@@ -8,75 +8,63 @@ import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-const feelings = [
+const companions = [
   {
-    name: "Thirsty",
-    emoji: "🥵",
+    name: "Solo",
+    emoji: "🧍",
   },
   {
-    name: "Hungry",
-    emoji: "😩",
+    name: "Date",
+    emoji: "👫",
   },
   {
-    name: "Tired",
-    emoji: "🫩",
+    name: "Family",
+    emoji: "👨‍👩‍👧‍👦",
   },
   {
-    name: "Angry",
-    emoji: "😡",
+    name: "Friends",
+    emoji: "👯‍♂️",
   },
   {
-    name: "Bored",
-    emoji: "😔",
-  },
-  {
-    name: "Sick",
-    emoji: "🤧",
-  },
-  {
-    name: "Energized",
-    emoji: "😁",
-  },
-  {
-    name: "Other",
-    emoji: "😁",
+    name: "Business",
+    emoji: "💼",
   },
 ];
 
-const RecommendationFirstStep = () => {
-  const [selectedFeelings, setSelectedFeelings] = useState<string[]>([]);
+const RecommendationSecondStep = () => {
+  const [selectedCompanion, setSelectedCompanion] = useState<string | null>(
+    null,
+  );
   const router = useRouter();
 
   return (
-    <AppLayout backButton={true} title="Step 1">
+    <AppLayout backButton={true} title="Step 2">
       <View className="bg-neutral-150 w-full rounded-md h-2 my-6">
         {/* {Progress bar} */}
-        <View className="bg-yellow-1 w-[33%] h-2 rounded-md"></View>
+        <View className="bg-yellow-1 w-[66%] h-2 rounded-md"></View>
       </View>
       <SlideInUpView delay={100}>
         <Text className="font-dm-medium text-[22px] text-neutral-800 mb-4">
-          How are you feeling right now?
+          Who are you eating with?
         </Text>
         <Text className="font-mulish-medium text-base text-neutral-600 mb-10">
-          Select all that applies:
+          Select one option:
         </Text>
       </SlideInUpView>
       <SlideInUpView
         delay={300}
         className="flex flex-row items-center gap-3 flex-wrap flex-1"
       >
-        {feelings.map((feeling) => {
-          const isSelected = selectedFeelings.includes(feeling.name);
+        {companions.map((companion) => {
+          const isSelected = selectedCompanion === companion.name;
           return (
             <ScaleOnPressView
-              key={feeling.name}
+              key={companion.name}
               onPress={() => {
                 if (isSelected) {
-                  setSelectedFeelings(
-                    selectedFeelings.filter((f) => f !== feeling.name),
-                  );
+                  setSelectedCompanion(null);
                 } else {
-                  setSelectedFeelings([...selectedFeelings, feeling.name]);
+                  setSelectedCompanion(companion.name);
                 }
               }}
               className={`px-[14px] py-3 rounded-2xl border border-neutral-200 ${
@@ -88,7 +76,7 @@ const RecommendationFirstStep = () => {
                   isSelected ? "text-white" : ""
                 }`}
               >
-                {feeling.emoji} {feeling.name}
+                {companion.emoji} {companion.name}
               </Text>
             </ScaleOnPressView>
           );
@@ -97,20 +85,20 @@ const RecommendationFirstStep = () => {
       <SlideInUpView delay={500} className="py-8">
         <PrimaryButton
           text="Next"
-          bgClass="bg-purple-2"
+           bgClass="bg-purple-2"
           textClass="text-white"
           onPress={() => {
             router.push(
-              "/(protected)/(virtual_assistant)/RecommendationSecondStep",
+              "/(protected)/(virtual_assistant)/RecommendationThirdStep",
             );
           }}
-          disabled={selectedFeelings.length === 0}
+          disabled={!selectedCompanion}
         />
       </SlideInUpView>
     </AppLayout>
   );
 };
 
-export default RecommendationFirstStep;
+export default RecommendationSecondStep;
 
 const styles = StyleSheet.create({});

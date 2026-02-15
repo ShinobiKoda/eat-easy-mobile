@@ -38,7 +38,7 @@ const Header = ({
       <View className="flex-1 flex flex-row items-center">
         {backButton && (
           <Pressable onPress={() => router.back()}>
-            <View className="w-[44px] h-[44px] bg-white dark:bg-neutral-700 rounded-xl flex items-center justify-center">
+            <View className="w-[44px] h-[44px] bg-white dark:bg-neutral-700 rounded-xl flex items-center justify-center mr-3">
               <ArrowBackIcon color={backButtonBgColor} />
             </View>
           </Pressable>
