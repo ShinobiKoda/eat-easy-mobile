@@ -1,4 +1,5 @@
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
+import { getPostAuthRoute } from "@/lib/getPostAuthRoute";
 import { supabase } from "@/lib/Supabase";
 import { useFonts } from "expo-font";
 import { Stack, useRouter, useSegments } from "expo-router";
@@ -63,7 +64,9 @@ export default function RootLayout() {
       const isVerified = session.user.user_metadata?.email_verified === true;
 
       if (isVerified && (inAuthGroup || isPublicRoute)) {
-        router.replace("/(protected)/SetLocation");
+        getPostAuthRoute().then((route) => {
+          router.replace(route as any);
+        });
       } else if (!isVerified && isPublicRoute) {
       }
     }
@@ -72,7 +75,12 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <StatusBar style="auto" translucent backgroundColor="transparent" hidden/>
+        <StatusBar
+          style="auto"
+          translucent
+          backgroundColor="transparent"
+          hidden
+        />
         {!loaded && !error ? (
           <LoadingState />
         ) : (

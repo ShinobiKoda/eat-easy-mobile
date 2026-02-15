@@ -1,5 +1,6 @@
 import AppLayout from "@/components/layout/AppLayout";
 import PrimaryButton from "@/components/PrimaryButton";
+import { supabase } from "@/lib/Supabase";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -7,6 +8,14 @@ import { Text, View } from "react-native";
 
 const Welcome = () => {
   const router = useRouter();
+
+  const handleContinue = async () => {
+    // Mark that the user has completed the location step
+    await supabase.auth.updateUser({
+      data: { location_set: true },
+    });
+    router.push("/(protected)/Restaurants");
+  };
 
   return (
     <AppLayout title="" showMenuButton={true} locationIcon={false}>
@@ -27,7 +36,7 @@ const Welcome = () => {
           text="Continue"
           bgClass="bg-purple-2 mt-[78px]"
           textClass="w-full text-white"
-          onPress={() => router.push("/(protected)/Restaurants")}
+          onPress={handleContinue}
         />
       </View>
     </AppLayout>

@@ -4,6 +4,7 @@ import KeyboardAvoidingViewWrapper from "@/components/KeyboardAvoidingViewWrappe
 import PrimaryButton from "@/components/PrimaryButton";
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
 import { useTheme } from "@/contexts/ThemeContext";
+import { getPostAuthRoute } from "@/lib/getPostAuthRoute";
 import { supabase } from "@/lib/Supabase";
 import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
@@ -73,7 +74,8 @@ const SignIn = () => {
       }
 
       setIsLoading(false);
-      router.replace("/(protected)/SetLocation");
+      const route = await getPostAuthRoute();
+      router.replace(route as any);
     } catch (error) {
       console.error("Sign in error:", error);
       Alert.alert("Error", "Something went wrong. Please try again.");
@@ -125,7 +127,8 @@ const SignIn = () => {
             return;
           }
 
-          router.replace("/(protected)/SetLocation");
+          const route = await getPostAuthRoute();
+          router.replace(route as any);
           return;
         }
 

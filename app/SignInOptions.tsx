@@ -1,6 +1,7 @@
 import { SlideInUpView } from "@/components/animations/reanimated";
 import PrimaryButton from "@/components/PrimaryButton";
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
+import { getPostAuthRoute } from "@/lib/getPostAuthRoute";
 import { supabase } from "@/lib/Supabase";
 import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
@@ -52,7 +53,8 @@ const SignInOptions = () => {
             return;
           }
 
-          router.replace("/(protected)/SetLocation");
+          const route = await getPostAuthRoute();
+          router.replace(route as any);
           return;
         }
 
