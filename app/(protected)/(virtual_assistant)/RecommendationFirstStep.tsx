@@ -1,4 +1,5 @@
 import {
+  AnimatedProgressBar,
   ScaleOnPressView,
   SlideInUpView,
 } from "@/components/animations/reanimated";
@@ -51,7 +52,11 @@ const RecommendationFirstStep = () => {
     <AppLayout backButton={true} title="Step 1">
       <View className="bg-neutral-150 dark:bg-neutral-700 w-full rounded-md h-2 my-6">
         {/* {Progress bar} */}
-        <View className="bg-yellow-1 w-[33%] h-2 rounded-md"></View>
+        <AnimatedProgressBar
+          initialProgress={0}
+          targetProgress={33}
+          className="bg-yellow-1 h-2 rounded-md"
+        />
       </View>
       <SlideInUpView delay={100}>
         <Text className="font-dm-medium text-[22px] text-neutral-800 dark:text-white mb-4">

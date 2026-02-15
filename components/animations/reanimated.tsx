@@ -150,3 +150,30 @@ export const PopInView = ({
     {children}
   </Animated.View>
 );
+
+export const AnimatedProgressBar = ({
+  initialProgress = 0,
+  targetProgress,
+  className,
+  style,
+}: {
+  initialProgress?: number;
+  targetProgress: number;
+  className?: string;
+  style?: StyleProp<ViewStyle>;
+}) => {
+  const width = useSharedValue(initialProgress);
+
+  React.useEffect(() => {
+    width.value = withTiming(targetProgress, {
+      duration: 1000,
+      easing: Easing.out(Easing.quad),
+    });
+  }, [targetProgress]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    width: `${width.value}%`,
+  }));
+
+  return <Animated.View style={[style, animatedStyle]} className={className} />;
+};
