@@ -8,6 +8,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { reverseGeocode } from "@/lib/tomtom";
 import { Image } from "expo-image";
 import * as Location from "expo-location";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 
@@ -16,11 +17,13 @@ const HomePageOptions = [
     image_url: require("@/assets/images/bulb-icon.png"),
     title: "Choose Virtual Assistant",
     description: "Simplify your decisions through our Smart Menu",
+    navigateTo: "/ChooseVirtualAssistant",
   },
   {
     image_url: require("@/assets/images/book-icon.png"),
     title: "Go to the menu",
     description: "If you already know what to order, this is the best choice",
+    navigateTo: "/ChooseVirtualAssistant",
   },
 ];
 
@@ -28,6 +31,7 @@ const Homepage = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [locationName, setLocationName] = useState("Locating...");
+  const router = useRouter();
 
   useEffect(() => {
     (async () => {
@@ -78,7 +82,10 @@ const Homepage = () => {
                   {option.description}
                 </Text>
               </View>
-              <ScaleOnPressView className="w-[46px] h-[46px] rounded-xl bg-orange-5 dark:bg-orange-1 flex items-center justify-center">
+              <ScaleOnPressView
+                onPress={() => router.push(option.navigateTo as any)}
+                className="w-[46px] h-[46px] rounded-xl bg-orange-5 dark:bg-orange-1 flex items-center justify-center"
+              >
                 <ArrowForwardIcon color={isDark ? "#fff" : "#FF7B2C"} />
               </ScaleOnPressView>
             </View>

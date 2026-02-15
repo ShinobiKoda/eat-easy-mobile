@@ -31,7 +31,7 @@ const Header = ({
   const locationIconColor = colorScheme === "dark" ? "#DCDCE4" : "#DCDCE4";
 
   return (
-    <View className="w-full flex flex-row items-center justify-between px-6">
+    <View className="w-full flex flex-row items-center justify-between px-6 py-3">
       <View className="flex-1 flex flex-row items-center">
         {backButton && (
           <Pressable onPress={goBack}>
