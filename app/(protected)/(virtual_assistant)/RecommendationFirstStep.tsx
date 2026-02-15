@@ -49,15 +49,15 @@ const RecommendationFirstStep = () => {
 
   return (
     <AppLayout backButton={true} title="Step 1">
-      <View className="bg-neutral-150 w-full rounded-md h-2 my-6">
+      <View className="bg-neutral-150 dark:bg-neutral-700 w-full rounded-md h-2 my-6">
         {/* {Progress bar} */}
         <View className="bg-yellow-1 w-[33%] h-2 rounded-md"></View>
       </View>
       <SlideInUpView delay={100}>
-        <Text className="font-dm-medium text-[22px] text-neutral-800 mb-4">
+        <Text className="font-dm-medium text-[22px] text-neutral-800 dark:text-white mb-4">
           How are you feeling right now?
         </Text>
-        <Text className="font-mulish-medium text-base text-neutral-600 mb-10">
+        <Text className="font-mulish-medium text-base text-neutral-600 dark:text-neutral-150 mb-10">
           Select all that applies:
         </Text>
       </SlideInUpView>
@@ -79,13 +79,13 @@ const RecommendationFirstStep = () => {
                   setSelectedFeelings([...selectedFeelings, feeling.name]);
                 }
               }}
-              className={`px-[14px] py-3 rounded-2xl border border-neutral-200 ${
-                isSelected ? "bg-yellow-1" : "bg-white"
+              className={`px-[14px] py-3 rounded-2xl border border-neutral-200 dark:border-neutral-700 ${
+                isSelected ? "bg-yellow-1" : "bg-white dark:bg-neutral-800"
               }`}
             >
               <Text
-                className={`text-neutral-500 font-mulish-medium text-base ${
-                  isSelected ? "text-white" : ""
+                className={`text-neutral-500 dark:text-neutral-150 font-mulish-medium text-base ${
+                  isSelected ? "text-white dark:text-neutral-800" : ""
                 }`}
               >
                 {feeling.emoji} {feeling.name}
