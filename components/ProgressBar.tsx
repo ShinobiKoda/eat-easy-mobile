@@ -12,7 +12,6 @@ export const ProgressBar = () => {
   const progress = useSharedValue(0);
 
   useEffect(() => {
-    // This starts automatically when the component mounts
     progress.value = withDelay(
       100,
       withTiming(100, {
@@ -21,7 +20,6 @@ export const ProgressBar = () => {
       }),
     );
 
-    // Cleanup reset
     return () => {
       progress.value = 0;
     };
@@ -40,7 +38,6 @@ export const ProgressBar = () => {
             style={animatedStyle}
           />
         </View>
-        {/* Fillers to maintain layout structure */}
         <View className="flex-1" />
         <View className="flex-1" />
       </View>
