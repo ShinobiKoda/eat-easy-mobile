@@ -94,3 +94,7 @@ export const HelpIcon = ({ size = 24, color = "#222" }: IconProps) => (
 export const LogOutIcon = ({ size = 24, color = "#222" }: IconProps) => (
   <Ionicons name="log-out-outline" size={size} color={color} />
 );
+
+export const CalenderIcon = ({ size = 24, color = "#222" }: IconProps) => (
+  <Ionicons name="calendar-outline" size={size} color={color} />
+);

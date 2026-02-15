@@ -5,13 +5,13 @@ import {
 } from "@/components/icons/Icons";
 import React from "react";
 import { Pressable, Text, useColorScheme, View } from "react-native";
+import { useRouter } from "expo-router";
 
 export interface HeaderProps {
   title?: string;
   description?: string;
   locationIcon?: boolean;
   backButton?: boolean;
-  goBack?: () => Promise<void>;
   showSideBar: boolean;
   showMenuButton?: boolean;
   openSideBar?: () => void;
@@ -21,7 +21,6 @@ const Header = ({
   title = "",
   locationIcon = false,
   backButton = false,
-  goBack,
   showMenuButton = false,
   openSideBar,
 }: HeaderProps) => {
@@ -30,19 +29,25 @@ const Header = ({
 
   const locationIconColor = colorScheme === "dark" ? "#DCDCE4" : "#DCDCE4";
 
+  const backButtonBgColor = colorScheme === "dark" ? "#ffffff" : "#666687";
+
+  const router = useRouter();
+
   return (
     <View className="w-full flex flex-row items-center justify-between px-6 py-3">
       <View className="flex-1 flex flex-row items-center">
         {backButton && (
-          <Pressable onPress={goBack}>
-            <View className="w-[44px] h-[44px] rounded-xl flex items-center justify-center">
-              <ArrowBackIcon />
+          <Pressable onPress={() => router.back()}>
+            <View className="w-[44px] h-[44px] bg-white dark:bg-neutral-700 rounded-xl flex items-center justify-center">
+              <ArrowBackIcon color={backButtonBgColor} />
             </View>
           </Pressable>
         )}
         <View className="flex flex-row items-center gap-3">
-          {locationIcon && <LocationIcon  color={locationIconColor}/>}
-          <Text className="text-neutral-500 dark:text-neutral-200 font-mulish-semibold text-base">{title}</Text>
+          {locationIcon && <LocationIcon color={locationIconColor} />}
+          <Text className="text-neutral-500 dark:text-neutral-200 font-mulish-semibold text-base">
+            {title}
+          </Text>
         </View>
       </View>
       {showMenuButton && (

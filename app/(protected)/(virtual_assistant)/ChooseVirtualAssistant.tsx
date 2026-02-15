@@ -3,10 +3,12 @@ import PrimaryButton from "@/components/PrimaryButton";
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
 import { Image } from "expo-image";
 import { Text } from "react-native";
+import { useRouter } from "expo-router";
 
 import React from "react";
 
 const ChooseVirtualAssistant = () => {
+  const router = useRouter();
   return (
     <SafeAreaViewWrapper>
       <FadeInView>
@@ -28,7 +30,7 @@ const ChooseVirtualAssistant = () => {
           next few questions.
         </Text>
       </SlideInUpView>
-      <SlideInUpView delay={400} className="flex flex-col gap-3 px-6 py-4">
+      <SlideInUpView delay={400} className="flex flex-col gap-3 px-6 py-8">
         <PrimaryButton
           text="Take me to the Menu"
           textClass="text-purple-3 dark:text-purple-5"
@@ -38,7 +40,7 @@ const ChooseVirtualAssistant = () => {
           text="Great, Let's Start"
           textClass="text-white"
           bgClass="bg-purple-2"
-          onPress={() => {}}
+          onPress={() => {router.push("/(protected)/(virtual_assistant)/MakeRecommendations")}}
         />
       </SlideInUpView>
     </SafeAreaViewWrapper>
