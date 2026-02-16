@@ -4,12 +4,11 @@ import {
 } from "@/components/animations/reanimated";
 import { ArrowForwardIcon } from "@/components/icons/Icons";
 import AppLayout from "@/components/layout/AppLayout";
+import { useLocation } from "@/contexts/LocationContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { reverseGeocode } from "@/lib/tomtom";
 import { Image } from "expo-image";
-import * as Location from "expo-location";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Text, View } from "react-native";
 
 const HomePageOptions = [
@@ -30,32 +29,24 @@ const HomePageOptions = [
 const Homepage = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const [locationName, setLocationName] = useState("Locating...");
+  const { address, errorMsg, isLoading, fetchLocation, location } =
+    useLocation();
   const router = useRouter();
 
   useEffect(() => {
-    (async () => {
-      try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          setLocationName("Permission denied");
-          return;
-        }
+    if (!location && !isLoading && !errorMsg) {
+      fetchLocation();
+    }
+  }, [location, isLoading, errorMsg]);
 
-        const location = await Location.getCurrentPositionAsync({});
-        const { latitude, longitude } = location.coords;
-
-        const address = await reverseGeocode(latitude, longitude);
-        setLocationName(address);
-      } catch (error) {
-        console.error("Error fetching location:", error);
-        setLocationName("Unknown Location");
-      }
-    })();
-  }, []);
+  const locationDisplay = isLoading
+    ? "Locating..."
+    : errorMsg
+      ? errorMsg
+      : address || "Unknown Location";
 
   return (
-    <AppLayout title={locationName} locationIcon={true}>
+    <AppLayout title={locationDisplay} locationIcon={true}>
       <SlideInUpView delay={100}>
         <Text className="font-dm-medium text-[22px] text-neutral-800 dark:text-white text-center mt-3">
           Let's find the perfect dish for you

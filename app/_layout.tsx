@@ -1,4 +1,5 @@
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
+import { LocationProvider } from "@/contexts/LocationContext";
 import { getPostAuthRoute } from "@/lib/getPostAuthRoute";
 import { supabase } from "@/lib/Supabase";
 import { useFonts } from "expo-font";
@@ -75,41 +76,49 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <StatusBar
-          style="auto"
-          translucent
-          backgroundColor="transparent"
-          hidden
-        />
-        {!loaded && !error ? (
-          <LoadingState />
-        ) : (
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="GetStarted" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="SignInOptions"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="(auth)/CreateAccount"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="(auth)/SignIn"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="(auth)/ForgotPassword"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="(auth)/VerifyCode"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen name="(protected)" options={{ headerShown: false }} />
-          </Stack>
-        )}
+        <LocationProvider>
+          <StatusBar
+            style="auto"
+            translucent
+            backgroundColor="transparent"
+            hidden
+          />
+          {!loaded && !error ? (
+            <LoadingState />
+          ) : (
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="GetStarted"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="SignInOptions"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="(auth)/CreateAccount"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="(auth)/SignIn"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="(auth)/ForgotPassword"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="(auth)/VerifyCode"
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="(protected)"
+                options={{ headerShown: false }}
+              />
+            </Stack>
+          )}
+        </LocationProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );
