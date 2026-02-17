@@ -88,7 +88,7 @@ const RecommendationThirdStep = () => {
           textClass="text-white"
           onPress={() => {
             // Navigate to results or home for now
-            router.push("/(protected)/Homepage");
+            router.push("/(protected)/(virtual_assistant)/ShowRecommendations");
           }}
           disabled={!selectedBudget}
         />
