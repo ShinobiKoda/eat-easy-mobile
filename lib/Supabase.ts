@@ -3,9 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 import { AppState } from "react-native";
 import "react-native-url-polyfill/auto";
 
-const supabaseUrl = "https://xnxfyqqjrtjbjwceozbj.supabase.co";
-const supabaseAnonKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhueGZ5cXFqcnRqYmp3Y2VvemJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5MDQ4ODgsImV4cCI6MjA2NzQ4MDg4OH0.Bz2MAusSfe8TENl-i_6WrdMNLMAJHel7yaE_IA-ECEg";
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
