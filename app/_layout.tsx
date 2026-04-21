@@ -86,41 +86,38 @@ export default function RootLayout() {
           {!loaded && !error ? (
             <LoadingState />
           ) : (
-            <Stack>
-              <Stack.Screen name="index" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="GetStarted"
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="SignInOptions"
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="(auth)/CreateAccount"
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="(auth)/SignIn"
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="(auth)/ForgotPassword"
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="(auth)/VerifyCode"
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="(protected)"
-                options={{ headerShown: false }}
-              />
-            </Stack>
+            <StackWithTheme />
           )}
         </LocationProvider>
       </ThemeProvider>
     </SafeAreaProvider>
+  );
+}
+
+/** Stack navigator with theme-aware background to prevent white flash on transitions */
+function StackWithTheme() {
+  const { theme } = useTheme();
+  // Match the SafeAreaViewWrapper gradient base color
+  const bgColor = theme === "dark" ? "#32324D" : "#F7F7F7";
+
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: bgColor },
+        animation: "fade",
+        animationDuration: 200,
+      }}
+    >
+      <Stack.Screen name="index" />
+      <Stack.Screen name="GetStarted" />
+      <Stack.Screen name="SignInOptions" />
+      <Stack.Screen name="(auth)/CreateAccount" />
+      <Stack.Screen name="(auth)/SignIn" />
+      <Stack.Screen name="(auth)/ForgotPassword" />
+      <Stack.Screen name="(auth)/VerifyCode" />
+      <Stack.Screen name="(protected)" />
+    </Stack>
   );
 }
 

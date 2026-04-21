@@ -46,7 +46,7 @@ const Homepage = () => {
       : address || "Unknown Location";
 
   return (
-    <AppLayout title={locationDisplay} locationIcon={true}>
+    <AppLayout title={locationDisplay} locationIcon={true} showMenuButton={true}>
       <SlideInUpView delay={100}>
         <Text className="font-dm-medium text-[22px] text-neutral-800 dark:text-white text-center mt-3">
           Let's find the perfect dish for you

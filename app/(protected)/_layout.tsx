@@ -1,3 +1,4 @@
+import { useTheme } from "@/contexts/ThemeContext";
 import { supabase } from "@/lib/Supabase";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { useEffect, useState } from "react";
@@ -33,14 +34,26 @@ export default function ProtectedLayout() {
     }
   }, [session, isLoading]);
 
+  const { theme } = useTheme();
+  const bgColor = theme === "dark" ? "#32324D" : "#F7F7F7";
+
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: bgColor }}>
+        <ActivityIndicator size="large" color={theme === "dark" ? "#fff" : "#32324D"} />
       </View>
     );
   }
 
   // If session exists, render the child route
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: bgColor },
+        animation: "fade",
+        animationDuration: 200,
+      }}
+    />
+  );
 }

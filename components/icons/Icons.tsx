@@ -98,3 +98,38 @@ export const LogOutIcon = ({ size = 24, color = "#222" }: IconProps) => (
 export const CalenderIcon = ({ size = 24, color = "#222" }: IconProps) => (
   <Ionicons name="calendar-outline" size={size} color={color} />
 );
+
+export const HomeOutlineIcon = ({ size = 24, color = "#222" }: IconProps) => (
+  <Ionicons name="home-outline" size={size} color={color} />
+);
+
+export const SparklesOutlineIcon = ({
+  size = 24,
+  color = "#222",
+}: IconProps) => <Ionicons name="sparkles-outline" size={size} color={color} />;
+
+export const RestaurantOutlineIcon = ({
+  size = 24,
+  color = "#222",
+}: IconProps) => (
+  <Ionicons name="restaurant-outline" size={size} color={color} />
+);
+
+export const CartOutlineIcon = ({ size = 24, color = "#222" }: IconProps) => (
+  <Ionicons name="cart-outline" size={size} color={color} />
+);
+
+export const BagOutlineIcon = ({ size = 24, color = "#222" }: IconProps) => (
+  <Ionicons name="bag-outline" size={size} color={color} />
+);
+
+export const ShieldCheckIcon = ({ size = 24, color = "#222" }: IconProps) => (
+  <Ionicons name="shield-checkmark-outline" size={size} color={color} />
+);
+
+export const ChevronForwardIcon = ({
+  size = 24,
+  color = "#222",
+}: IconProps) => (
+  <Ionicons name="chevron-forward" size={size} color={color} />
+);
