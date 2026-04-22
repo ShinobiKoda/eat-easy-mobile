@@ -47,11 +47,12 @@ const AppLayout = ({
         <View style={styles.content}>{children}</View>
 
         {isSidebarOpen && (
-          <View style={[StyleSheet.absoluteFill, { zIndex: 100 }]}>
+          <View style={[StyleSheet.absoluteFill, { zIndex: 100 }]} pointerEvents="box-none">
             <Animated.View
               entering={FadeIn}
               exiting={FadeOut}
               style={StyleSheet.absoluteFill}
+              pointerEvents="box-none"
             >
               <Pressable style={StyleSheet.absoluteFill} onPress={closeSidebar}>
                 <BlurView

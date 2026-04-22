@@ -94,7 +94,6 @@ export default function RootLayout() {
   );
 }
 
-/** Stack navigator with theme-aware background to prevent white flash on transitions */
 function StackWithTheme() {
   const { theme } = useTheme();
   // Match the SafeAreaViewWrapper gradient base color
