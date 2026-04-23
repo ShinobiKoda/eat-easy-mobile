@@ -27,7 +27,7 @@ const Success: React.FC<SuccessProps> = ({ isOpen }) => {
           {/* Done Button */}
           <TouchableOpacity
             style={styles.doneButton}
-            onPress={() => router.replace("/(protected)/OrderStatus")}
+            onPress={() => router.replace("/(protected)/OrderStatus" as any)}
           >
             <Text style={styles.doneText}>Done</Text>
           </TouchableOpacity>

@@ -240,8 +240,8 @@ const Profile: React.FC = () => {
               Account Information
             </Text>
             <View className="gap-2.5 mb-6">
-              {fields.map((f) => (
-                <EditableField key={f.key} {...f} fieldKey={f.key} onSave={handleSaveField} saving={saving} />
+              {fields.map(({ key, ...rest }) => (
+                <EditableField key={key} {...rest} fieldKey={key} onSave={handleSaveField} saving={saving} />
               ))}
             </View>
           </FadeInView>

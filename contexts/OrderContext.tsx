@@ -227,7 +227,7 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({
     // In React Native, React Router's state transfer works differently.
     // We'll navigate and the checkout screen can pull from AsyncStorage, or we pass state as string.
     router.push({
-      pathname: "/Checkout",
+      pathname: "/OrderCheckout" as any,
       params: { orderParams: JSON.stringify(sent) }
     });
   };
