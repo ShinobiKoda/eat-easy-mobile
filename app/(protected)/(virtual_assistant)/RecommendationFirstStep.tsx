@@ -8,50 +8,35 @@ import PrimaryButton from "@/components/PrimaryButton";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const feelings = [
-  {
-    name: "Thirsty",
-    emoji: "🥵",
-  },
-  {
-    name: "Hungry",
-    emoji: "😩",
-  },
-  {
-    name: "Tired",
-    emoji: "🫩",
-  },
-  {
-    name: "Angry",
-    emoji: "😡",
-  },
-  {
-    name: "Bored",
-    emoji: "😔",
-  },
-  {
-    name: "Sick",
-    emoji: "🤧",
-  },
-  {
-    name: "Energized",
-    emoji: "😁",
-  },
-  {
-    name: "Other",
-    emoji: "😁",
-  },
+  { name: "Thirsty", emoji: "🥵" },
+  { name: "Hungry", emoji: "😩" },
+  { name: "Tired", emoji: "🫩" },
+  { name: "Angry", emoji: "😡" },
+  { name: "Bored", emoji: "😔" },
+  { name: "Sick", emoji: "🤧" },
+  { name: "Energized", emoji: "😁" },
+  { name: "Other", emoji: "😁" },
 ];
 
 const RecommendationFirstStep = () => {
   const [selectedFeelings, setSelectedFeelings] = useState<string[]>([]);
   const router = useRouter();
 
+  const handleNext = async () => {
+    // Save moods to AsyncStorage for later steps
+    await AsyncStorage.setItem(
+      "eat-easy-rec-moods",
+      JSON.stringify(selectedFeelings)
+    );
+    router.push("/(protected)/(virtual_assistant)/RecommendationSecondStep");
+  };
+
   return (
     <AppLayout backButton={true} title="Step 1">
       <View className="bg-neutral-150 dark:bg-neutral-700 w-full rounded-md h-2 my-6">
-        {/* {Progress bar} */}
         <AnimatedProgressBar
           initialProgress={0}
           targetProgress={33}
@@ -78,7 +63,7 @@ const RecommendationFirstStep = () => {
               onPress={() => {
                 if (isSelected) {
                   setSelectedFeelings(
-                    selectedFeelings.filter((f) => f !== feeling.name),
+                    selectedFeelings.filter((f) => f !== feeling.name)
                   );
                 } else {
                   setSelectedFeelings([...selectedFeelings, feeling.name]);
@@ -104,11 +89,7 @@ const RecommendationFirstStep = () => {
           text="Next"
           bgClass="bg-purple-2"
           textClass="text-white"
-          onPress={() => {
-            router.push(
-              "/(protected)/(virtual_assistant)/RecommendationSecondStep",
-            );
-          }}
+          onPress={handleNext}
           disabled={selectedFeelings.length === 0}
         />
       </SlideInUpView>
@@ -117,5 +98,3 @@ const RecommendationFirstStep = () => {
 };
 
 export default RecommendationFirstStep;
-
-const styles = StyleSheet.create({});

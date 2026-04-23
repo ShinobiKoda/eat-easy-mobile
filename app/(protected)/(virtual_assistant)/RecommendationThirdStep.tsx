@@ -7,35 +7,31 @@ import AppLayout from "@/components/layout/AppLayout";
 import PrimaryButton from "@/components/PrimaryButton";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const budgets = [
-  {
-    value: "₦2,000 - ₦5,000",
-    description: "",
-  },
-  {
-    value: "₦5,000 - ₦10,000",
-    description: "",
-  },
-  {
-    value: "₦10,000 - ₦20,000",
-    description: "",
-  },
-  {
-    value: "₦20,000+",
-    description: "",
-  },
+  { value: "₦2,000 - ₦5,000" },
+  { value: "₦5,000 - ₦10,000" },
+  { value: "₦10,000 - ₦20,000" },
+  { value: "₦20,000+" },
 ];
 
 const RecommendationThirdStep = () => {
   const [selectedBudget, setSelectedBudget] = useState<string | null>(null);
   const router = useRouter();
 
+  const handleFinish = async () => {
+    if (selectedBudget) {
+      await AsyncStorage.setItem("eat-easy-rec-budget", selectedBudget);
+    }
+    // Navigate to Generating page which reads all saved prefs and calls AI
+    router.push("/(protected)/(virtual_assistant)/Generating" as any);
+  };
+
   return (
     <AppLayout backButton={true} title="Step 3">
       <View className="bg-neutral-150 dark:bg-neutral-700 w-full rounded-md h-2 my-6">
-        {/* {Progress bar} */}
         <AnimatedProgressBar
           initialProgress={66}
           targetProgress={100}
@@ -60,11 +56,7 @@ const RecommendationThirdStep = () => {
             <ScaleOnPressView
               key={budget.value}
               onPress={() => {
-                if (isSelected) {
-                  setSelectedBudget(null);
-                } else {
-                  setSelectedBudget(budget.value);
-                }
+                setSelectedBudget(isSelected ? null : budget.value);
               }}
               className={`px-[14px] py-3 rounded-2xl border border-neutral-200 dark:border-neutral-700 ${
                 isSelected ? "bg-yellow-1" : "bg-white dark:bg-neutral-800"
@@ -86,10 +78,7 @@ const RecommendationThirdStep = () => {
           text="Finish"
           bgClass="bg-purple-2"
           textClass="text-white"
-          onPress={() => {
-            // Navigate to results or home for now
-            router.push("/(protected)/(virtual_assistant)/ShowRecommendations");
-          }}
+          onPress={handleFinish}
           disabled={!selectedBudget}
         />
       </SlideInUpView>
@@ -98,5 +87,3 @@ const RecommendationThirdStep = () => {
 };
 
 export default RecommendationThirdStep;
-
-const styles = StyleSheet.create({});

@@ -7,41 +7,31 @@ import AppLayout from "@/components/layout/AppLayout";
 import PrimaryButton from "@/components/PrimaryButton";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const companions = [
-  {
-    name: "Solo",
-    emoji: "🧍",
-  },
-  {
-    name: "Date",
-    emoji: "👫",
-  },
-  {
-    name: "Family",
-    emoji: "👨‍👩‍👧‍👦",
-  },
-  {
-    name: "Friends",
-    emoji: "👯‍♂️",
-  },
-  {
-    name: "Business",
-    emoji: "💼",
-  },
+  { name: "Solo", emoji: "🧍" },
+  { name: "Date", emoji: "👫" },
+  { name: "Family", emoji: "👨‍👩‍👧‍👦" },
+  { name: "Friends", emoji: "👯‍♂️" },
+  { name: "Business", emoji: "💼" },
 ];
 
 const RecommendationSecondStep = () => {
-  const [selectedCompanion, setSelectedCompanion] = useState<string | null>(
-    null,
-  );
+  const [selectedCompanion, setSelectedCompanion] = useState<string | null>(null);
   const router = useRouter();
+
+  const handleNext = async () => {
+    if (selectedCompanion) {
+      await AsyncStorage.setItem("eat-easy-rec-party", selectedCompanion);
+    }
+    router.push("/(protected)/(virtual_assistant)/RecommendationThirdStep");
+  };
 
   return (
     <AppLayout backButton={true} title="Step 2">
       <View className="bg-neutral-150 dark:bg-neutral-700 w-full rounded-md h-2 my-6">
-        {/* {Progress bar} */}
         <AnimatedProgressBar
           initialProgress={33}
           targetProgress={66}
@@ -66,11 +56,7 @@ const RecommendationSecondStep = () => {
             <ScaleOnPressView
               key={companion.name}
               onPress={() => {
-                if (isSelected) {
-                  setSelectedCompanion(null);
-                } else {
-                  setSelectedCompanion(companion.name);
-                }
+                setSelectedCompanion(isSelected ? null : companion.name);
               }}
               className={`px-[14px] py-3 rounded-2xl border border-neutral-200 dark:border-neutral-700 ${
                 isSelected ? "bg-yellow-1" : "bg-white dark:bg-neutral-800"
@@ -92,11 +78,7 @@ const RecommendationSecondStep = () => {
           text="Next"
           bgClass="bg-purple-2"
           textClass="text-white"
-          onPress={() => {
-            router.push(
-              "/(protected)/(virtual_assistant)/RecommendationThirdStep",
-            );
-          }}
+          onPress={handleNext}
           disabled={!selectedCompanion}
         />
       </SlideInUpView>
@@ -105,5 +87,3 @@ const RecommendationSecondStep = () => {
 };
 
 export default RecommendationSecondStep;
-
-const styles = StyleSheet.create({});
