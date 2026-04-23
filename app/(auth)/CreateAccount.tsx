@@ -192,10 +192,10 @@ const CreateAccount = () => {
       expiresAt.setMinutes(expiresAt.getMinutes() + 10);
 
       // Delete any old OTPs for this email first
-      await supabase.from("otp_verifications").delete().eq("email", email);
+      await supabase.from("verification_codes").delete().eq("email", email);
 
       const { error: otpError } = await supabase
-        .from("otp_verifications")
+        .from("verification_codes")
         .insert([
           {
             email,

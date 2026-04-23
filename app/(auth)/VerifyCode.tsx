@@ -80,7 +80,7 @@ const VerifyCode = () => {
 
     try {
       const { data, error } = await supabase
-        .from("otp_verifications")
+        .from("verification_codes")
         .select("*")
         .eq("email", email)
         .eq("code", code)
@@ -102,7 +102,7 @@ const VerifyCode = () => {
 
       // SUCCESS! Code verified - Delete the used OTP
       await supabase
-        .from("otp_verifications")
+        .from("verification_codes")
         .delete()
         .eq("email", email)
         .eq("code", code);
@@ -173,14 +173,14 @@ const VerifyCode = () => {
       const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
 
       // Delete old OTPs for this email
-      await supabase.from("otp_verifications").delete().eq("email", email);
+      await supabase.from("verification_codes").delete().eq("email", email);
 
       // Store new OTP with expiration (10 minutes)
       const expiresAt = new Date();
       expiresAt.setMinutes(expiresAt.getMinutes() + 10);
 
       const { error: otpError } = await supabase
-        .from("otp_verifications")
+        .from("verification_codes")
         .insert([
           {
             email,
