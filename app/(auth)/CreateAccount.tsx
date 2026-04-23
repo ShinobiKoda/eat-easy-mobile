@@ -184,34 +184,8 @@ const CreateAccount = () => {
 
      
 
-      // 2. Generate 4-digit OTP
-      const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
-
-      // 2. Store OTP in database with expiration (10 minutes)
-      const expiresAt = new Date();
-      expiresAt.setMinutes(expiresAt.getMinutes() + 10);
-
-      // Delete any old OTPs for this email first
-      await supabase.from("verification_codes").delete().eq("email", email);
-
-      const { error: otpError } = await supabase
-        .from("verification_codes")
-        .insert([
-          {
-            email,
-            code: otpCode,
-            expires_at: expiresAt.toISOString(),
-          },
-        ]);
-
-      if (otpError) {
-        console.error("OTP storage error:", otpError);
-        Alert.alert("Error", "Failed to generate verification code.");
-        setIsLoading(false);
-        return;
-      }
-
-      // 4. Send OTP via API
+      // 2. Send verification code via server-side API
+      // The API route handles OTP generation, DB storage, and email sending
       const apiUrl = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
 
       const navigateToVerify = () => {
@@ -222,29 +196,30 @@ const CreateAccount = () => {
       };
 
       try {
-        const response = await fetch(`${apiUrl}/api/send-otp`, {
+        const response = await fetch(`${apiUrl}/api/send-code`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email, code: otpCode }),
+          body: JSON.stringify({ email }),
         });
 
         if (!response.ok) {
-          console.log("⚠️ API call failed. OTP code for testing:", otpCode);
+          const errorData = await response.json().catch(() => ({}));
+          console.log("⚠️ API call failed:", errorData);
           Alert.alert(
             "Note",
-            `Email service unavailable. For testing, your code is: ${otpCode}`,
+            "Email service unavailable. Please try again later.",
             [{ text: "Continue", onPress: navigateToVerify }],
           );
           setIsLoading(false);
           return;
         }
       } catch {
-        console.log("⚠️ Email send failed. OTP code for testing:", otpCode);
+        console.log("⚠️ Email send failed — network error");
         Alert.alert(
           "Note",
-          `Email service unavailable. For testing, your code is: ${otpCode}`,
+          "Email service unavailable. Please try again later.",
           [{ text: "Continue", onPress: navigateToVerify }],
         );
         setIsLoading(false);

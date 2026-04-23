@@ -79,16 +79,25 @@ const VerifyCode = () => {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase
-        .from("verification_codes")
-        .select("*")
-        .eq("email", email)
-        .eq("code", code)
-        .gt("expires_at", new Date().toISOString())
-        .single();
+      const apiUrl = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
 
-      if (error || !data) {
-        Alert.alert("Error", "Invalid or expired code. Please try again.", [
+      // 1. Verify code and create user via server-side API route
+      const verifyResponse = await fetch(`${apiUrl}/api/verify-code`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          code,
+          password,
+          username,
+          phoneNumber: phone,
+        }),
+      });
+
+      if (!verifyResponse.ok) {
+        const errorData = await verifyResponse.json().catch(() => ({}));
+        const message = errorData.error || "Invalid or expired code.";
+        Alert.alert("Error", message, [
           {
             text: "OK",
             onPress: () => {
@@ -100,53 +109,37 @@ const VerifyCode = () => {
         return;
       }
 
-      // SUCCESS! Code verified - Delete the used OTP
-      await supabase
-        .from("verification_codes")
-        .delete()
-        .eq("email", email)
-        .eq("code", code);
-
-      // Now create the Supabase account (deferred from signup)
+      // 2. User created on backend. Sign in locally.
       if (password) {
-        const { error: signUpError } = await supabase.auth.signUp({
+        const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
-          options: {
-            data: {
-              username: username || "",
-              phone: phone || "",
-              email_verified: true,
-            },
-          },
         });
 
-        if (signUpError) {
-          // If user already exists, try signing in instead
-          if (
-            signUpError.message.includes("already registered") ||
-            signUpError.status === 422
-          ) {
-            const { error: signInError } =
-              await supabase.auth.signInWithPassword({ email, password });
-            if (signInError) {
-              Alert.alert(
-                "Error",
-                "Account creation failed. Please try signing in.",
-              );
-              setIsLoading(false);
-              router.replace("/(auth)/SignIn");
-              return;
-            }
-            // Update metadata after sign-in
-            await supabase.auth.updateUser({
-              data: { email_verified: true },
-            });
-          } else {
-            Alert.alert("Error", signUpError.message);
-            setIsLoading(false);
-            return;
-          }
+        if (signInError) {
+          Alert.alert("Error", "Account created but sign-in failed. Please try signing in manually.");
+          setIsLoading(false);
+          router.replace("/(auth)/SignIn");
+          return;
+        }
+
+        // 3. Create public profile
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { createProfile } = await import("@/services/authService");
+          const { couponService } = await import("@/services/couponService");
+
+          await createProfile(
+            {
+              username: username || "",
+              email,
+              phone_number: phone || "",
+            },
+            user.id,
+          );
+
+          // Grant welcome coupon
+          await couponService.grantWelcomeCoupon(user.id);
         }
       }
 
@@ -169,59 +162,18 @@ const VerifyCode = () => {
 
     setIsLoading(true);
     try {
-      // Generate new OTP
-      const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
-
-      // Delete old OTPs for this email
-      await supabase.from("verification_codes").delete().eq("email", email);
-
-      // Store new OTP with expiration (10 minutes)
-      const expiresAt = new Date();
-      expiresAt.setMinutes(expiresAt.getMinutes() + 10);
-
-      const { error: otpError } = await supabase
-        .from("verification_codes")
-        .insert([
-          {
-            email,
-            code: otpCode,
-            expires_at: expiresAt.toISOString(),
-          },
-        ]);
-
-      if (otpError) {
-        Alert.alert("Error", "Failed to generate new code. Please try again.");
-        setIsLoading(false);
-        return;
-      }
-
-      // Send OTP via API
       const apiUrl = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
 
-      try {
-        const response = await fetch(`${apiUrl}/api/send-otp`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, code: otpCode }),
-        });
+      const response = await fetch(`${apiUrl}/api/send-code`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
 
-        if (!response.ok) {
-          console.log("⚠️ API call failed. New OTP code for testing:", otpCode);
-          Alert.alert(
-            "Note",
-            `Email service unavailable. For testing, your code is: ${otpCode}`,
-          );
-        } else {
-          Alert.alert("Success", "A new code has been sent to your email.");
-        }
-      } catch {
-        console.log("⚠️ Email send failed. New OTP code for testing:", otpCode);
-        Alert.alert(
-          "Note",
-          `Email service unavailable. For testing, your code is: ${otpCode}`,
-        );
+      if (!response.ok) {
+        Alert.alert("Error", "Failed to resend code. Please try again.");
+      } else {
+        Alert.alert("Success", "A new code has been sent to your email.");
       }
 
       setCode("");
