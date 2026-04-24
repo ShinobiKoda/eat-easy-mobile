@@ -128,48 +128,17 @@ const CreateAccount = () => {
     setIsLoading(true);
 
     try {
-      // 1. Check if email is already registered
-      const { data: signUpData, error: signUpCheckError } =
-        await supabase.auth.signUp({
-          email,
-          password,
-        });
+      // 1. Check if email is already registered via profile table (avoids triggering Supabase emails)
+      const { data: existingProfile } = await supabase
+        .from("eat_easy_profile")
+        .select("email")
+        .eq("email", email)
+        .maybeSingle();
 
-      // Always sign out immediately to prevent any session from persisting
-      await supabase.auth.signOut();
-
-      if (signUpCheckError) {
-        if (
-          signUpCheckError.message.includes("already registered") ||
-          signUpCheckError.status === 422
-        ) {
-          Alert.alert(
-            "Account Exists",
-            "This email has already been used to sign up. Please sign in instead.",
-            [
-              {
-                text: "Go to Sign In",
-                onPress: () => router.push("/SignIn"),
-              },
-              { text: "Cancel", style: "cancel" },
-            ],
-          );
-          setIsLoading(false);
-          return;
-        }
-        Alert.alert("Error", signUpCheckError.message);
-        setIsLoading(false);
-        return;
-      }
-
-      // If identities is empty, the email already exists (e.g. Google sign-in)
-      if (
-        signUpData?.user?.identities &&
-        signUpData.user.identities.length === 0
-      ) {
+      if (existingProfile) {
         Alert.alert(
           "Account Exists",
-          "This email has already been used to sign in with Google. Please sign in with Google instead.",
+          "This email has already been used to sign up. Please sign in instead.",
           [
             {
               text: "Go to Sign In",

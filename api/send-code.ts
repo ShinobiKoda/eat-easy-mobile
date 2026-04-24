@@ -29,86 +29,53 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: "Failed to store verification code" });
     }
 
-    // Professional email template
-    const emailHtml = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f6f6f9;">
-  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f6f6f9;">
-    <tr>
-      <td style="padding: 40px 20px;">
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 480px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; box-shadow: 0 4px 24px rgba(50, 50, 77, 0.08);">
-          <tr>
-            <td style="background: linear-gradient(135deg, #615793 0%, #4a4a6a 100%); border-radius: 16px 16px 0 0; padding: 32px 40px; text-align: center;">
-              <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">🍽️ Eat Easy</h1>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding: 40px;">
-              <p style="margin: 0 0 24px 0; color: #32324d; font-size: 16px; line-height: 1.6;">Hi there! 👋</p>
-              <p style="margin: 0 0 32px 0; color: #666687; font-size: 15px; line-height: 1.6;">You requested a verification code to complete your sign up. Enter this code to verify your email address:</p>
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 0 0 32px 0;">
-                <tr>
-                  <td style="background: linear-gradient(135deg, #FFB01D 0%, #FF7B2C 100%); border-radius: 12px; padding: 3px;">
-                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                      <tr>
-                        <td style="background-color: #FFF2EA; border-radius: 10px; padding: 24px; text-align: center;">
-                          <span style="font-size: 36px; font-weight: 800; letter-spacing: 12px; color: #32324d; font-family: 'Courier New', monospace;">${code}</span>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
-                <tr>
-                  <td style="background-color: #ebeaf2; border-radius: 8px; padding: 16px 20px;">
-                    <p style="margin: 0; color: #615793; font-size: 14px; font-weight: 600;">⏱️ This code expires in 10 minutes</p>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td style="background-color: #f6f6f9; border-radius: 0 0 16px 16px; padding: 24px 40px; text-align: center;">
-              <p style="margin: 0 0 8px 0; color: #8e8ea9; font-size: 13px;">Didn't request this code? You can safely ignore this email.</p>
-              <p style="margin: 0; color: #a5a5ba; font-size: 12px;">© ${new Date().getFullYear()} Eat Easy. All rights reserved.</p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`.trim();
+    // Send email using Resend
+    const resendApiKey = process.env.RESEND_API_KEY;
 
-    const API_URL = process.env.API_URL || "";
-    const API_SECRET = process.env.API_SECRET || "";
-
-    if (!API_URL || !API_SECRET) {
-      console.error("❌ Missing Cloudflare Worker API Configuration");
-      return res.status(500).json({ error: "Server Configuration Error" });
+    if (!resendApiKey) {
+      console.error("❌ RESEND_API_KEY not configured");
+      return res.status(500).json({ error: "Email service not configured" });
     }
 
-    // Send email using Cloudflare Worker
-    await fetch(API_URL, {
+    const emailHtml = `
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f9fafb; padding: 40px 0;">
+  <div style="max-width: 400px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; padding: 32px; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+    <h2 style="color: #111827; font-size: 24px; font-weight: 700; text-align: center; margin-bottom: 8px;">🍽️ Eat Easy</h2>
+    <p style="color: #4b5563; font-size: 16px; text-align: center; margin-bottom: 32px;">Enter the following code to verify your email address.</p>
+    <div style="background-color: #f3f4f6; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 32px;">
+      <span style="font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #1f2937;">${code}</span>
+    </div>
+    <p style="color: #9ca3af; font-size: 13px; text-align: center; line-height: 1.5;">
+      This code will expire in 10 minutes.<br />
+      If you didn't request this email, you can safely ignore it.
+    </p>
+    <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb; text-align: center;">
+      <span style="color: #374151; font-weight: 600; font-size: 14px;">© ${new Date().getFullYear()} Eat Easy</span>
+    </div>
+  </div>
+</div>`.trim();
+
+    const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
+        Authorization: `Bearer ${resendApiKey}`,
         "Content-Type": "application/json",
-        "x-app-secret": API_SECRET,
       },
       body: JSON.stringify({
-        to: email,
-        subject: "🔐 Your Verification Code - Eat Easy",
+        from: "Eat Easy <auth@sir-p.tech>",
+        to: [email],
+        subject: `${code} is your verification code`,
         html: emailHtml,
       }),
     });
 
-    console.log(`Verification code sent to ${email}`);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Resend API error:", errorData);
+      return res.status(500).json({ error: "Failed to send email" });
+    }
+
+    console.log(`✅ Verification code sent to ${email}`);
     res.json({ message: "Verification code sent" });
   } catch (err: any) {
     console.error("Server error:", err.message);
