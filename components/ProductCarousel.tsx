@@ -89,7 +89,7 @@ const ProductCarousel = () => {
         onScrollBeginDrag={onScrollBeginDrag}
         onScrollEndDrag={onScrollEndDrag}
         scrollEventThrottle={16}
-        contentContainerStyle={{ paddingHorizontal: width * 0.075 }}
+        contentContainerStyle={{ paddingHorizontal: width * 0.03 }}
         snapToInterval={width * 0.85 + 16}
         snapToAlignment="center"
         decelerationRate="fast"
