@@ -12,6 +12,8 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemeProvider, useTheme } from "../contexts/ThemeContext";
+import OrderBatchMonitor from "../components/dashboard/OrderBatchMonitor";
+import OrderReadyToast from "../components/OrderReadyToast";
 import "../global.css";
 
 SplashScreen.preventAutoHideAsync();
@@ -90,7 +92,11 @@ export default function RootLayout() {
               {!loaded && !error ? (
                 <LoadingState />
               ) : (
-                <StackWithTheme />
+                <>
+                  <StackWithTheme />
+                  <OrderBatchMonitor />
+                  <OrderReadyToast />
+                </>
               )}
             </OrderProvider>
           </RestaurantProvider>
