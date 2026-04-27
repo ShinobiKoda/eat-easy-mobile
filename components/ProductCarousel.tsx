@@ -83,18 +83,18 @@ const ProductCarousel = () => {
         data={Product}
         keyExtractor={(item) => item.id.toString()}
         horizontal
-        pagingEnabled
+        pagingEnabled={false}
         showsHorizontalScrollIndicator={false}
         onScroll={onScroll}
         onScrollBeginDrag={onScrollBeginDrag}
         onScrollEndDrag={onScrollEndDrag}
         scrollEventThrottle={16}
-        contentContainerStyle={{ paddingHorizontal: width * 0.05 }}
-        snapToAlignment="center"
+        contentContainerStyle={{ paddingHorizontal: 24 }}
+        snapToInterval={width * 0.85 + 12}
         decelerationRate="fast"
         renderItem={({ item }) => (
           <View
-            style={{ width: width * 0.9, height: 160, marginRight: width * 0.05 }}
+            style={{ width: width * 0.85, height: 160, marginRight: 12 }}
             className="rounded-2xl bg-neutral-900 dark:bg-neutral-150 flex-row overflow-hidden items-center justify-between"
           >
             <View className="flex-1 p-4">

@@ -1,5 +1,7 @@
 import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
 import { LocationProvider } from "@/contexts/LocationContext";
+import { RestaurantProvider } from "@/contexts/RestaurantContext";
+import { OrderProvider } from "@/contexts/OrderContext";
 import { getPostAuthRoute } from "@/lib/getPostAuthRoute";
 import { supabase } from "@/lib/Supabase";
 import { useFonts } from "expo-font";
@@ -77,17 +79,21 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <ThemeProvider>
         <LocationProvider>
-          <StatusBar
-            style="auto"
-            translucent
-            backgroundColor="transparent"
-            hidden
-          />
-          {!loaded && !error ? (
-            <LoadingState />
-          ) : (
-            <StackWithTheme />
-          )}
+          <RestaurantProvider>
+            <OrderProvider>
+              <StatusBar
+                style="auto"
+                translucent
+                backgroundColor="transparent"
+                hidden
+              />
+              {!loaded && !error ? (
+                <LoadingState />
+              ) : (
+                <StackWithTheme />
+              )}
+            </OrderProvider>
+          </RestaurantProvider>
         </LocationProvider>
       </ThemeProvider>
     </SafeAreaProvider>

@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, Modal, Pressable, StyleSheet } from "react-native";
 import Header from "../../components/layout/Header";
 import { FontAwesome5, Feather, Ionicons } from "@expo/vector-icons";
+import { SafeAreaViewWrapper } from "@/components/SafeAreaViewWrapper";
+import Sidebar from "@/components/layout/Sidebar";
+import Animated, { FadeIn, FadeOut, SlideInLeft, SlideOutLeft } from "react-native-reanimated";
+import { BlurView } from "expo-blur";
 
 import SkeletonCard from "@/components/SkeletonCard";
 import ProductCarousel from "../../components/ProductCarousel";
@@ -127,18 +131,23 @@ const FullMenu: React.FC = () => {
     scrollViewRef.current?.scrollTo({ y: 300, animated: true });
   };
 
-  return (
-    <View className="flex-1 bg-white dark:bg-(--neutral-900)">
-      <Header
-        title={restaurantName}
-        backButton={true}
-        showSideBar={false}
-      />
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-      <ScrollView ref={scrollViewRef} className="flex-1" contentContainerStyle={{ paddingBottom: 100 }}>
-        <View className="pt-6 md:pt-12 w-full">
-          <View className="px-6 py-4 md:py-8">
-            <View className="px-2 py-2 md:p-4 rounded-2xl md:shadow-sm bg-white dark:bg-[#4A4A6A] flex-row justify-between items-center">
+  return (
+    <SafeAreaViewWrapper>
+      <View style={{ flex: 1, position: 'relative' }}>
+        <Header
+          title={restaurantName}
+          backButton={false}
+          showSideBar={isSidebarOpen}
+          showMenuButton={true}
+          openSideBar={() => setIsSidebarOpen(!isSidebarOpen)}
+        />
+
+        <ScrollView ref={scrollViewRef} className="flex-1" contentContainerStyle={{ paddingBottom: 100 }}>
+          <View className="w-full">
+          <View className="px-6 py-4">
+            <View className="px-2 py-2 rounded-2xl flex-row justify-between items-center">
               <View className="flex-1 flex-row items-center px-4 py-3 rounded-2xl border border-neutral-200 bg-transparent dark:border-neutral-600">
                 <TextInput
                   className="flex-1 text-base text-neutral-500 dark:text-neutral-200"
@@ -315,22 +324,18 @@ const FullMenu: React.FC = () => {
       <Modal
         visible={!!selectedItem}
         transparent={true}
-        animationType="fade"
+        animationType="slide"
         onRequestClose={() => setSelectedItem(null)}
       >
-        <TouchableOpacity 
-          activeOpacity={1} 
-          className="flex-1 bg-black/50 justify-center items-center p-4"
-          onPress={() => setSelectedItem(null)}
-        >
+        <View className="flex-1 bg-black/50 justify-end">
           {selectedItem && (
-             <ViewDish
-               item={selectedItem}
-               onClose={() => setSelectedItem(null)}
-               onAddToOrder={addToOrder}
-             />
+            <ViewDish
+              item={selectedItem}
+              onClose={() => setSelectedItem(null)}
+              onAddToOrder={addToOrder}
+            />
           )}
-        </TouchableOpacity>
+        </View>
       </Modal>
 
       {/* filter component */}
@@ -355,7 +360,35 @@ const FullMenu: React.FC = () => {
           )}
         </TouchableOpacity>
       </Modal>
-    </View>
+
+        {/* Sidebar overlay */}
+        {isSidebarOpen && (
+          <View style={[StyleSheet.absoluteFill, { zIndex: 100 }]} pointerEvents="box-none">
+            <Animated.View
+              entering={FadeIn}
+              exiting={FadeOut}
+              style={StyleSheet.absoluteFill}
+              pointerEvents="box-none"
+            >
+              <Pressable style={StyleSheet.absoluteFill} onPress={() => setIsSidebarOpen(false)}>
+                <BlurView
+                  intensity={50}
+                  tint="dark"
+                  style={StyleSheet.absoluteFill}
+                />
+              </Pressable>
+            </Animated.View>
+            <Animated.View
+              entering={SlideInLeft}
+              exiting={SlideOutLeft}
+              style={{ position: 'absolute', top: 0, bottom: 0, left: 0, width: 260, maxWidth: 300, zIndex: 100 }}
+            >
+              <Sidebar onClose={() => setIsSidebarOpen(false)} />
+            </Animated.View>
+          </View>
+        )}
+      </View>
+    </SafeAreaViewWrapper>
   );
 };
 
