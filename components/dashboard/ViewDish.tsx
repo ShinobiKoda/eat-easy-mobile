@@ -50,7 +50,11 @@ const ViewDish: React.FC<ViewDishProps> = ({ item, onClose, onAddToOrder }) => {
   };
 
   const incrementTopping = (id: number) => {
-    setToppingCounts((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+    setToppingCounts((prev) => {
+      const current = prev[id] || 0;
+      if (current >= 2) return prev;
+      return { ...prev, [id]: current + 1 };
+    });
   };
 
   const decrementTopping = (id: number) => {
@@ -110,8 +114,6 @@ const ViewDish: React.FC<ViewDishProps> = ({ item, onClose, onAddToOrder }) => {
     <View
       style={styles.container}
       className="bg-[#f7f7f7] dark:bg-[#32324D]"
-      onStartShouldSetResponder={() => true}
-      onTouchEnd={(e) => e.stopPropagation()}
     >
       <View className="items-center pt-2 pb-4 border-b border-neutral-200 dark:border-neutral-600 relative">
         <View className="w-16 h-1.5 bg-neutral-300 dark:bg-neutral-500 rounded-full mb-4" />
@@ -250,8 +252,15 @@ const ViewDish: React.FC<ViewDishProps> = ({ item, onClose, onAddToOrder }) => {
                       <Text className="mx-3 text-base font-semibold dark:text-white">
                         {topCount}
                       </Text>
-                      <TouchableOpacity onPress={() => incrementTopping(top.id)}>
-                        <Feather name="plus" size={18} color="#71717a" />
+                      <TouchableOpacity 
+                        onPress={() => incrementTopping(top.id)}
+                        disabled={topCount >= 2}
+                      >
+                        <Feather 
+                          name="plus" 
+                          size={18} 
+                          color={topCount >= 2 ? "#d4d4d8" : "#71717a"} 
+                        />
                       </TouchableOpacity>
                     </View>
                   )}
