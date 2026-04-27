@@ -21,7 +21,7 @@ const GetStarted = () => {
 
       if (session?.user) {
         // User already has an active session, skip sign-in
-        router.replace("/(protected)/SetLocation");
+        router.replace("/(protected)/Homepage");
       } else {
         // No session, proceed with normal sign-up/sign-in flow
         router.push("/SignInOptions");
@@ -57,7 +57,7 @@ const GetStarted = () => {
         <SlideInUpView delay={400} className="flex flex-col gap-[10px] mt-8">
           <PrimaryButton
             text="Sign up later"
-            onPress={() => router.push("/(protected)/SetLocation")}
+            onPress={() => router.push("/(protected)/Homepage")}
           />
           <PrimaryButton
             text={isChecking ? "Checking..." : "Get Started"}

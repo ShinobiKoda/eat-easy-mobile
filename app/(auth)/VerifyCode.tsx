@@ -146,7 +146,7 @@ const VerifyCode = () => {
       Alert.alert("Success", "Your account has been verified!", [
         {
           text: "Continue",
-          onPress: () => router.replace("/(protected)/SetLocation"),
+          onPress: () => router.replace("/(protected)/Homepage"),
         },
       ]);
     } catch (err) {

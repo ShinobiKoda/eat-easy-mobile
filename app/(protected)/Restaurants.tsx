@@ -2,6 +2,7 @@ import PrimaryButton from "@/components/PrimaryButton";
 import { SlideInUpView } from "@/components/animations/reanimated";
 import AppLayout from "@/components/layout/AppLayout";
 import RestaurantSkeleton from "@/components/ui/RestaurantSkeleton";
+import { useRestaurant } from "@/contexts/RestaurantContext";
 import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
 import {
@@ -28,6 +29,7 @@ const RestaurantFinder: React.FC = () => {
     string | null
   >(null);
 
+  const { setSelectedRestaurant } = useRestaurant();
   const router = useRouter();
 
   const findFood = async () => {
@@ -45,16 +47,11 @@ const RestaurantFinder: React.FC = () => {
     try {
       setStatus("Locating you...");
 
-      // 2. Get Coords
       const location = await Location.getCurrentPositionAsync({});
       const { latitude, longitude } = location.coords;
 
-      // const latitude = 6.6018;
-      // const longitude = 3.3515;
-
       setStatus("Fetching data...");
 
-      // 3. CALL THE IMPORTED SERVICE
       const data = await fetchNearbyPlaces(latitude, longitude, "food");
 
       setRestaurants(data);
@@ -63,6 +60,13 @@ const RestaurantFinder: React.FC = () => {
         setStatus(`Found ${data.length} places!`);
       } else {
         setStatus("No places found nearby.");
+        // Default to Gbam Bistro when no restaurants found
+        const defaultRestaurant = {
+          id: 'gbam-bistro-default',
+          name: 'Gbam Bistro',
+        } as any;
+        setSelectedRestaurant(defaultRestaurant);
+        router.push("/(protected)/Homepage");
       }
     } catch (error) {
       console.error(error);
@@ -76,6 +80,17 @@ const RestaurantFinder: React.FC = () => {
   useEffect(() => {
     findFood();
   }, []);
+
+  const handleContinue = () => {
+    const selected = restaurants.find((r) => r.id === selectedRestaurantId);
+    if (selected) {
+      setSelectedRestaurant({
+        id: selected.id,
+        name: selected.poi.name,
+      } as any);
+    }
+    router.push("/(protected)/Homepage");
+  };
 
   const renderItem: ListRenderItem<Restaurant> = ({ item, index }) => {
     const isSelected = selectedRestaurantId === item.id;
@@ -132,8 +147,9 @@ const RestaurantFinder: React.FC = () => {
           </ScrollView>
           <PrimaryButton
             text="Continue"
-            bgClass="bg-purple-2 my-4"
+            bgClass="bg-neutral-400 my-4"
             onPress={() => {}}
+            disabled={true}
           />
         </View>
       </AppLayout>
@@ -170,8 +186,9 @@ const RestaurantFinder: React.FC = () => {
         </View>
         <PrimaryButton
           text="Continue"
-          bgClass="bg-purple-2 my-4"
-          onPress={() => {router.push("/(protected)/Homepage")}}
+          bgClass={selectedRestaurantId ? "bg-purple-2 my-4" : "bg-neutral-400 my-4"}
+          onPress={handleContinue}
+          disabled={!selectedRestaurantId}
         />
       </View>
     </AppLayout>

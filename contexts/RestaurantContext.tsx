@@ -31,6 +31,14 @@ export const RestaurantProvider: React.FC<{ children: ReactNode }> = ({ children
                 const saved = await AsyncStorage.getItem('selectedRestaurant');
                 if (isMounted && saved) {
                     setSelectedRestaurantState(JSON.parse(saved));
+                } else if (isMounted) {
+                    // Default to Gbam Bistro if no restaurant was previously selected
+                    const defaultRestaurant: Restaurant = {
+                        id: 'gbam-bistro-default',
+                        name: 'Gbam Bistro',
+                    } as Restaurant;
+                    setSelectedRestaurantState(defaultRestaurant);
+                    await AsyncStorage.setItem('selectedRestaurant', JSON.stringify(defaultRestaurant));
                 }
             } catch (error) {
                 console.error("Failed to load selected restaurant", error);

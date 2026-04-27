@@ -22,7 +22,7 @@ const HomePageOptions = [
     image_url: require("@/assets/images/book-icon.png"),
     title: "Go to the menu",
     description: "If you already know what to order, this is the best choice",
-    navigateTo: "/ChooseVirtualAssistant",
+    navigateTo: "/(protected)/FullMenu",
   },
 ];
 

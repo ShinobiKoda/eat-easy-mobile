@@ -64,7 +64,7 @@ const AuthCallback = () => {
           await couponService.grantWelcomeCoupon(user.id);
           await AsyncStorage.setItem("eat-easy-show-welcome-discount", "true");
 
-          router.replace("/(protected)/SetLocation" as any);
+          router.replace("/(protected)/Homepage" as any);
         }
       } catch (err) {
         console.error("[AuthCallback] Error processing OAuth callback:", err);

@@ -17,7 +17,7 @@ const ITEMS_PER_PAGE = 12;
 
 const FullMenu: React.FC = () => {
   const { selectedRestaurant } = useRestaurant();
-  const restaurantName = selectedRestaurant?.name || "Gram Bistro";
+  const restaurantName = selectedRestaurant?.name || "Gbam Bistro";
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
