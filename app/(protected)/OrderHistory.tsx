@@ -4,7 +4,7 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { Feather, Ionicons } from "@expo/vector-icons";
-import Header from "../../components/layout/Header";
+import AppLayout from "../../components/layout/AppLayout";
 import { orderService, type OrderRecord } from "../../services/orderService";
 import { useRestaurant } from "../../contexts/RestaurantContext";
 import { FadeInView, PopInView, ScaleOnPressView } from "../../components/animations/reanimated";
@@ -19,6 +19,7 @@ const OrderHistory: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<OrderRecord | null>(null);
   const { selectedRestaurant } = useRestaurant();
   const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   useEffect(() => {
     const fetch = async () => {
@@ -45,41 +46,61 @@ const OrderHistory: React.FC = () => {
     new Date(d).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
 
   return (
-    <View className="flex-1 bg-neutral-50 dark:bg-neutral-900">
-      <Header title="Order History" backButton showSideBar={false} />
-
-      <ScrollView className="flex-1" contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
+    <AppLayout title="Order History" showMenuButton={true} locationIcon={false}>
+      <ScrollView className="flex-1" contentContainerStyle={{ padding: 20, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         {/* Active Restaurant Card */}
         <FadeInView>
-          <View className="rounded-3xl bg-neutral-800 dark:bg-neutral-200 p-6 mb-6 overflow-hidden">
-            <View className="flex-row items-center gap-2 mb-1">
-              <View className="bg-orange-500/20 px-3 py-1 rounded-lg">
-                <Text className="text-orange-500 text-xs font-semibold">Active Restaurant</Text>
+          <View className="rounded-3xl bg-neutral-900 dark:bg-neutral-150 flex-row items-center justify-between mb-8 overflow-hidden max-h-[240px]">
+            <View className="flex-row items-center gap-5 md:gap-8 flex-1">
+              {/* Food image */}
+              <View className="relative w-[30%] h-[120px] sm:h-full hidden sm:flex items-center justify-center">
+                <Image
+                  source={require("../../assets/images/active-bg.png")}
+                  style={{ width: "100%", height: "100%", position: 'absolute' }}
+                  contentFit="cover"
+                />
+                <Image
+                  source={{ uri: (selectedRestaurant as any)?.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c" }}
+                  style={{ width: 80, height: 80, borderRadius: 40, zIndex: 10 }}
+                  contentFit="cover"
+                />
+              </View>
+              {/* Order info */}
+              <View className="space-y-2 p-4 sm:p-6 flex-1">
+                <View className="bg-neutral-150/20 dark:bg-orange-500/15 px-3 py-1 rounded-[9px] self-start mb-2">
+                  <Text className="text-xs md:text-sm font-medium text-neutral-150 dark:text-orange-500">
+                    Active Restaurant
+                  </Text>
+                </View>
+                <Text className="text-white dark:text-neutral-800 font-bold text-[20px] md:text-[24px]">
+                  {selectedRestaurant?.name || "Gram Bistro"}
+                </Text>
+                <Text className="text-neutral-400 dark:text-neutral-800 text-[13px] md:text-[14px] font-medium mt-2 leading-5">
+                  From tracking its progress to making changes to the order, you can view real-time updates on your current order.
+                </Text>
               </View>
             </View>
-            <Text className="text-white dark:text-neutral-800 font-bold text-2xl mt-2">
-              {selectedRestaurant?.name || "Gram Bistro"}
-            </Text>
-            <Text className="text-neutral-400 dark:text-neutral-600 text-sm mt-1">
-              View real-time updates on your current order.
-            </Text>
+            {/* Arrow button */}
+            <TouchableOpacity className="w-11 h-11 rounded-2xl bg-orange-500 items-center justify-center mr-4 sm:mr-6 shadow-sm">
+              <Feather name="arrow-right" size={20} color="white" />
+            </TouchableOpacity>
           </View>
         </FadeInView>
 
         {/* Filter Tabs */}
         <FadeInView delay={100}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-5">
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-6">
             {filterTabs.map((tab) => (
               <ScaleOnPressView
                 key={tab}
                 onPress={() => setActiveFilter(tab)}
-                className={`px-4 py-2.5 rounded-2xl mr-2 ${
+                className={`px-4 py-2.5 rounded-[16px] mr-3 ${
                   activeFilter === tab
-                    ? "bg-yellow-400"
-                    : "bg-transparent"
+                    ? "bg-[#FFB01D]"
+                    : "bg-transparent dark:bg-neutral-800"
                 }`}
               >
-                <Text className={`text-sm font-semibold ${
+                <Text className={`text-[12px] md:text-sm font-semibold ${
                   activeFilter === tab
                     ? "text-neutral-800 font-bold"
                     : "text-neutral-500 dark:text-neutral-300"
@@ -99,7 +120,7 @@ const OrderHistory: React.FC = () => {
         ) : filteredOrders.length === 0 ? (
           <FadeInView>
             <View className="items-center py-16">
-              <Text className="text-neutral-500 dark:text-neutral-300 text-base">
+              <Text className="text-neutral-500 dark:text-neutral-300 text-[16px] font-medium text-center">
                 {activeFilter === "All your orders"
                   ? "No orders yet. Place your first order!"
                   : `No orders in the ${activeFilter.toLowerCase()}.`}
@@ -107,103 +128,120 @@ const OrderHistory: React.FC = () => {
             </View>
           </FadeInView>
         ) : (
-          filteredOrders.map((order, i) => (
-            <PopInView key={order.id} delay={i * 60}>
-              <TouchableOpacity
-                onPress={() => setSelectedOrder(order)}
-                activeOpacity={0.7}
-                className="bg-neutral-100 dark:bg-neutral-700 rounded-2xl p-4 flex-row items-center justify-between mb-3 shadow-sm"
-              >
-                <View className="flex-row items-center gap-3 flex-1">
-                  <View className="w-14 h-14 rounded-full overflow-hidden bg-neutral-200 dark:bg-neutral-600">
-                    {order.items[0]?.image && (
-                      <Image source={{ uri: order.items[0].image }} style={{ width: "100%", height: "100%" }} contentFit="cover" />
-                    )}
-                  </View>
-                  <View className="flex-1">
-                    <Text className="text-neutral-800 dark:text-white font-semibold text-base" numberOfLines={1}>
-                      {order.restaurantName}
-                    </Text>
-                    <View className="flex-row items-center gap-3 mt-1">
-                      <View className="flex-row items-center gap-1">
-                        <Ionicons name="wallet-outline" size={14} color="#FFB01D" />
-                        <Text className="text-neutral-500 dark:text-neutral-300 text-xs">
-                          ${order.total.toFixed(2)}
-                        </Text>
-                      </View>
-                      <View className="flex-row items-center gap-1">
-                        <Feather name="calendar" size={14} color="#FF7B2C" />
-                        <Text className="text-neutral-500 dark:text-neutral-300 text-xs">
-                          {formatDate(order.createdAt)}
-                        </Text>
+          <View className="gap-4">
+            {filteredOrders.map((order, i) => (
+              <PopInView key={order.id} delay={i * 60}>
+                <TouchableOpacity
+                  onPress={() => setSelectedOrder(order)}
+                  activeOpacity={0.7}
+                  className="bg-neutral-100 dark:bg-neutral-700 rounded-2xl pr-4 flex-row items-center justify-between shadow-sm overflow-hidden min-h-[90px]"
+                >
+                  <View className="flex-row items-center gap-4 flex-1">
+                    {/* Order image (left side overlapping bg) */}
+                    <View className="relative w-24 h-[90px] items-center justify-center">
+                      <Image 
+                        source={isDark ? require("../../assets/images/food-bg.png") : require("../../assets/images/dark-food-bg.png")} 
+                        style={{ width: "100%", height: "100%", position: 'absolute' }} 
+                        contentFit="cover" 
+                      />
+                      <Image 
+                        source={{ uri: order.items[0]?.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c" }} 
+                        style={{ width: 56, height: 56, borderRadius: 28, zIndex: 10, marginLeft: 10 }} 
+                        contentFit="cover" 
+                      />
+                    </View>
+                    
+                    {/* Order details */}
+                    <View className="flex-1 py-3">
+                      <Text className="text-neutral-900 dark:text-white font-semibold text-[16px]" numberOfLines={1}>
+                        {order.restaurantName}
+                      </Text>
+                      <View className="flex-row items-center gap-4 mt-2">
+                        <View className="flex-row items-center gap-1">
+                          <Ionicons name="wallet-outline" size={16} color="#FFB01D" />
+                          <Text className="text-neutral-500 dark:text-neutral-300 text-[13px] font-medium">
+                            ${order.total.toFixed(2)}
+                          </Text>
+                        </View>
+                        <View className="flex-row items-center gap-1">
+                          <Feather name="calendar" size={16} color="#FF7B2C" />
+                          <Text className="text-neutral-500 dark:text-neutral-300 text-[13px] font-medium">
+                            {formatDate(order.createdAt)}
+                          </Text>
+                        </View>
                       </View>
                     </View>
                   </View>
-                </View>
-                <Feather name="chevron-right" size={20} color="#a3a3a3" />
-              </TouchableOpacity>
-            </PopInView>
-          ))
+                  <View className="w-10 h-10 rounded-xl bg-orange-500 items-center justify-center">
+                    <Feather name="more-horizontal" size={20} color="white" />
+                  </View>
+                </TouchableOpacity>
+              </PopInView>
+            ))}
+          </View>
         )}
       </ScrollView>
 
       {/* Order Detail Modal */}
-      <Modal visible={!!selectedOrder} transparent animationType="slide">
-        <View className="flex-1 justify-end">
+      <Modal visible={!!selectedOrder} transparent animationType="fade">
+        <View className="flex-1 items-center justify-center px-4">
           <TouchableOpacity
             activeOpacity={1}
             onPress={() => setSelectedOrder(null)}
-            className="flex-1 bg-black/50"
+            className="absolute inset-0 bg-black/60"
           />
-          <View className="bg-white dark:bg-neutral-800 rounded-t-3xl p-6 max-h-[70%]">
-            <View className="flex-row items-center justify-between mb-4">
-              <View>
-                <Text className="text-xl font-bold dark:text-white">Order Details</Text>
-                {selectedOrder && (
-                  <Text className="text-neutral-500 dark:text-neutral-300 text-sm mt-1">
-                    {selectedOrder.restaurantName} · {formatDate(selectedOrder.createdAt)}
-                  </Text>
-                )}
+          <View className="bg-white dark:bg-neutral-700 rounded-[32px] w-full max-w-lg shadow-2xl overflow-hidden max-h-[80%]">
+            <View className="p-6 md:p-8 flex-1">
+              <View className="flex-row items-center justify-between mb-6">
+                <View>
+                  <Text className="text-2xl font-bold dark:text-white">Order Details</Text>
+                  {selectedOrder && (
+                    <Text className="text-neutral-500 dark:text-neutral-300 text-sm mt-1">
+                      {selectedOrder.restaurantName} · {formatDate(selectedOrder.createdAt)}
+                    </Text>
+                  )}
+                </View>
+                <TouchableOpacity
+                  onPress={() => setSelectedOrder(null)}
+                  className="w-10 h-10 rounded-full bg-neutral-100 dark:bg-neutral-600 items-center justify-center"
+                >
+                  <Ionicons name="close" size={24} color={colorScheme === "dark" ? "white" : "#333"} />
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity
-                onPress={() => setSelectedOrder(null)}
-                className="w-10 h-10 rounded-full bg-neutral-100 dark:bg-neutral-700 items-center justify-center"
-              >
-                <Ionicons name="close" size={24} color={colorScheme === "dark" ? "white" : "#333"} />
-              </TouchableOpacity>
-            </View>
 
-            <FlatList
-              data={selectedOrder?.items || []}
-              keyExtractor={(_, idx) => idx.toString()}
-              renderItem={({ item }) => (
-                <View className="flex-row items-center justify-between p-4 rounded-2xl bg-neutral-50 dark:bg-neutral-700/50 mb-2">
-                  <View className="flex-row items-center gap-3 flex-1">
-                    <View className="w-12 h-12 rounded-full overflow-hidden">
-                      <Image source={{ uri: item.image }} style={{ width: "100%", height: "100%" }} contentFit="cover" />
+              <FlatList
+                data={selectedOrder?.items || []}
+                keyExtractor={(_, idx) => idx.toString()}
+                showsVerticalScrollIndicator={false}
+                renderItem={({ item }) => (
+                  <View className="flex-row items-center justify-between p-4 rounded-2xl bg-neutral-100/50 dark:bg-neutral-600/50 mb-3">
+                    <View className="flex-row items-center gap-4 flex-1">
+                      <View className="w-14 h-14 rounded-full overflow-hidden">
+                        <Image source={{ uri: item.image || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c" }} style={{ width: "100%", height: "100%" }} contentFit="cover" />
+                      </View>
+                      <View>
+                        <Text className="font-bold dark:text-white text-base">{item.name}</Text>
+                        <Text className="text-sm text-neutral-500 dark:text-neutral-300">
+                          {item.qty} x ${item.price.toFixed(2)}
+                        </Text>
+                      </View>
                     </View>
-                    <View>
-                      <Text className="font-bold dark:text-white">{item.name}</Text>
-                      <Text className="text-sm text-neutral-500 dark:text-neutral-300">
-                        {item.qty} x ${item.price.toFixed(2)}
-                      </Text>
-                    </View>
+                    <Text className="font-bold text-orange-500 text-base">${(item.qty * item.price).toFixed(2)}</Text>
                   </View>
-                  <Text className="font-bold text-orange-500">${(item.qty * item.price).toFixed(2)}</Text>
+                )}
+              />
+
+              {selectedOrder && (
+                <View className="mt-6 pt-6 border-t border-neutral-100 dark:border-neutral-600 flex-row justify-between items-center">
+                  <Text className="font-bold text-xl dark:text-white">Total Amount</Text>
+                  <Text className="font-bold text-xl text-orange-500">${selectedOrder.total.toFixed(2)}</Text>
                 </View>
               )}
-            />
-
-            {selectedOrder && (
-              <View className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-700 flex-row justify-between">
-                <Text className="font-bold text-lg dark:text-white">Total</Text>
-                <Text className="font-bold text-lg text-orange-500">${selectedOrder.total.toFixed(2)}</Text>
-              </View>
-            )}
+            </View>
           </View>
         </View>
       </Modal>
-    </View>
+    </AppLayout>
   );
 };
 

@@ -295,6 +295,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
         </View>
       ),
       label: "Order History",
+      route: "/(protected)/OrderHistory",
     },
     {
       id: "locations",
