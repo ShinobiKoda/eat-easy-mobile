@@ -1,28 +1,11 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Linking,
-} from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Linking } from "react-native";
+import { Feather, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useColorScheme } from "react-native";
-import {
-  FadeInView,
-  PopInView,
-  SlideInUpView,
-  ScaleOnPressView,
-} from "../../components/animations/reanimated";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  FadeIn,
-  Layout,
-} from "react-native-reanimated";
-import Header from "../../components/layout/Header";
+import AppLayout from "../../components/layout/AppLayout";
+import { FadeInView, PopInView, ScaleOnPressView } from "../../components/animations/reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming, Easing, measure, useAnimatedRef } from "react-native-reanimated";
 
 /* ─── FAQ Data ─── */
 const faqs = [
@@ -71,23 +54,17 @@ const faqs = [
 /* ─── Story Highlights ─── */
 const storyHighlights = [
   {
-    icon: "lightbulb-outline" as const,
-    iconFamily: "MaterialCommunityIcons" as const,
-    color: "#FFB01D",
+    icon: <Ionicons name="bulb-outline" size={28} color="#eab308" />,
     title: "The Idea",
     text: "EatEasy started with a simple question: why is ordering food still so complicated? We set out to build something effortless.",
   },
   {
-    icon: "sparkles" as const,
-    iconFamily: "Ionicons" as const,
-    color: "#615793",
+    icon: <Ionicons name="sparkles-outline" size={28} color="#9333ea" />,
     title: "Smart by Design",
     text: "We wove AI into every corner — from personalised recommendations to a smart assistant that learns your taste over time.",
   },
   {
-    icon: "heart-outline" as const,
-    iconFamily: "Ionicons" as const,
-    color: "#FF7B2C",
+    icon: <Ionicons name="heart-outline" size={28} color="#f97316" />,
     title: "Built with Love",
     text: "Every pixel, animation, and interaction is crafted to make your dining experience delightful, whether you're ordering for one or a party of ten.",
   },
@@ -96,28 +73,28 @@ const storyHighlights = [
 /* ─── Quick Links ─── */
 const quickLinks = [
   {
-    icon: "restaurant-outline" as const,
+    icon: <Ionicons name="restaurant-outline" size={22} color="#9333ea" />,
     label: "Browse Menu",
     desc: "Explore all dishes and cuisines",
-    route: "/(protected)/FullMenu" as const,
+    route: "/(protected)/Restaurants",
   },
   {
-    icon: "bag-handle-outline" as const,
+    icon: <Feather name="shopping-bag" size={22} color="#f97316" />,
     label: "Order Status",
     desc: "Track your active orders",
-    route: "/(protected)/OrderStatus" as const,
+    route: "/(protected)/OrderStatus",
   },
   {
-    icon: "gift-outline" as const,
+    icon: <MaterialIcons name="delivery-dining" size={22} color="#eab308" />,
     label: "Rewards",
     desc: "View and claim your rewards",
-    route: "/(protected)/Rewards" as const,
+    route: "/(protected)/Rewards",
   },
   {
-    icon: "shield-checkmark-outline" as const,
+    icon: <Ionicons name="shield-checkmark-outline" size={22} color="#22c55e" />,
     label: "Smart Assistant",
     desc: "Get AI-powered meal suggestions",
-    route: "/(protected)/(virtual_assistant)/ChooseVirtualAssistant" as const,
+    route: "/(protected)/(virtual_assistant)/ChooseVirtualAssistant",
   },
 ];
 
@@ -128,18 +105,36 @@ const AccordionItem: React.FC<{
   isOpen: boolean;
   onToggle: () => void;
 }> = ({ question, answer, isOpen, onToggle }) => {
-  const rotation = useSharedValue(0);
+  const animatedHeight = useSharedValue(0);
+  const animatedRotation = useSharedValue(0);
+  const contentRef = useAnimatedRef<Animated.View>();
 
   React.useEffect(() => {
-    rotation.value = withTiming(isOpen ? 180 : 0, { duration: 250 });
+    if (isOpen) {
+      setTimeout(() => {
+        const measured = measure(contentRef);
+        const height = measured ? measured.height : 100;
+        animatedHeight.value = withTiming(height, { duration: 300, easing: Easing.out(Easing.exp) });
+        animatedRotation.value = withTiming(180, { duration: 300 });
+      }, 0);
+    } else {
+      animatedHeight.value = withTiming(0, { duration: 300, easing: Easing.out(Easing.exp) });
+      animatedRotation.value = withTiming(0, { duration: 300 });
+    }
   }, [isOpen]);
 
-  const chevronStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${rotation.value}deg` }],
+  const bodyStyle = useAnimatedStyle(() => ({
+    height: animatedHeight.value,
+    opacity: animatedHeight.value > 0 ? 1 : 0,
+    overflow: 'hidden',
+  }));
+
+  const iconStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${animatedRotation.value}deg` }],
   }));
 
   return (
-    <View className="bg-white dark:bg-neutral-700 rounded-2xl mb-3 overflow-hidden shadow-sm">
+    <View className="bg-white dark:bg-neutral-700 rounded-2xl shadow-sm mb-3 overflow-hidden">
       <TouchableOpacity
         onPress={onToggle}
         activeOpacity={0.7}
@@ -148,198 +143,187 @@ const AccordionItem: React.FC<{
         <Text className="font-semibold text-[15px] text-neutral-800 dark:text-white flex-1 pr-4">
           {question}
         </Text>
-        <Animated.View style={chevronStyle}>
-          <Feather name="chevron-down" size={20} color="#a3a3a3" />
+        <Animated.View style={iconStyle}>
+          <Feather name="chevron-down" size={20} color="#9ca3af" />
         </Animated.View>
       </TouchableOpacity>
 
-      {isOpen && (
-        <Animated.View entering={FadeIn.duration(200)}>
-          <View className="px-5 pb-4">
-            <Text className="text-sm text-neutral-500 dark:text-neutral-300 leading-relaxed">
-              {answer}
-            </Text>
-          </View>
+      <Animated.View style={bodyStyle}>
+        <Animated.View ref={contentRef} className="absolute top-0 w-full px-5 pb-4">
+          <Text className="text-sm font-medium text-neutral-500 dark:text-neutral-300 leading-relaxed">
+            {answer}
+          </Text>
         </Animated.View>
-      )}
+      </Animated.View>
     </View>
   );
 };
 
 /* ─── Help Page ─── */
 const Help: React.FC = () => {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
   const router = useRouter();
-  const colorScheme = useColorScheme();
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const handleSupportEmail = () => {
+    Linking.openURL("mailto:support@eateasy.com");
+  };
 
   return (
-    <View className="flex-1 bg-neutral-50 dark:bg-neutral-900">
-      <Header
-        title="Help & FAQ"
-        backButton={true}
-        showSideBar={false}
-      />
+    <AppLayout title="Help & FAQ" showMenuButton={true} locationIcon={false} backButton={false}>
+      <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
+        
+        {/* ── Hero Banner ── */}
+        <PopInView className="mb-10">
+          <LinearGradient
+            colors={["#9333ea", "#7e22ce"]}
+            className="rounded-3xl p-8 overflow-hidden relative"
+          >
+            {/* Decorative circles */}
+            <View className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-white/10" />
+            <View className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-white/10" />
 
-      <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 40 }}>
-        <View className="px-5 pt-4">
-          {/* ── Hero Banner ── */}
-          <PopInView>
-            <View className="relative overflow-hidden rounded-3xl bg-purple-700 p-6 mb-6">
-              {/* Decorative circles */}
-              <View className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-white/5" />
-              <View className="absolute -bottom-8 -left-8 w-24 h-24 rounded-full bg-white/5" />
-
-              <View className="relative z-10">
-                <View className="flex-row items-center gap-2 mb-2">
-                  <Ionicons name="chatbubble-ellipses-outline" size={20} color="rgba(255,255,255,0.8)" />
-                  <Text className="text-white/70 text-xs font-semibold uppercase tracking-wider">
-                    Help Centre
-                  </Text>
-                </View>
-                <Text className="text-white font-bold text-[24px] leading-tight mb-2">
-                  How can we{"\n"}help you today?
-                </Text>
-                <Text className="text-white/70 text-sm">
-                  Browse our FAQ below or reach out — we're always happy to help.
+            <View className="relative z-10">
+              <View className="flex-row items-center gap-2 mb-3">
+                <Ionicons name="chatbubbles-outline" size={24} color="rgba(255,255,255,0.8)" />
+                <Text className="text-white/80 text-sm font-semibold uppercase tracking-wider">
+                  Help Centre
                 </Text>
               </View>
+              <Text className="text-white font-bold text-[32px] leading-tight font-mullish mb-3">
+                How can we{"\n"}help you today?
+              </Text>
+              <Text className="text-white/80 text-base font-medium max-w-[250px]">
+                Browse our FAQ below or reach out — we're always happy to help.
+              </Text>
             </View>
-          </PopInView>
+          </LinearGradient>
+        </PopInView>
 
-          {/* ── Our Story ── */}
-          <FadeInView>
-            <Text className="font-bold text-lg text-neutral-800 dark:text-white mb-1">
+        {/* ── Our Story ── */}
+        <View className="mb-10">
+          <FadeInView delay={100}>
+            <Text className="font-bold text-xl text-neutral-800 dark:text-white mb-2 font-mullish">
               Our Story
             </Text>
-            <Text className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
-              EatEasy was born from a passion for great food and great technology.
+            <Text className="text-sm font-medium text-neutral-500 dark:text-neutral-400 mb-6">
+              EatEasy was born from a passion for great food and great technology. Here's the journey in a nutshell.
             </Text>
           </FadeInView>
 
-          <View className="mb-6">
+          <View className="space-y-4">
             {storyHighlights.map((item, i) => (
-              <FadeInView key={i} delay={i * 100}>
-                <View className="bg-white dark:bg-neutral-700 rounded-2xl p-5 shadow-sm mb-3 gap-3">
-                  <View
-                    className="w-12 h-12 rounded-xl items-center justify-center"
-                    style={{ backgroundColor: `${item.color}15` }}
-                  >
-                    {item.iconFamily === "Ionicons" ? (
-                      <Ionicons name={item.icon as any} size={24} color={item.color} />
-                    ) : (
-                      <MaterialCommunityIcons name={item.icon as any} size={24} color={item.color} />
-                    )}
+              <FadeInView delay={200 + i * 100} key={i}>
+                <View className="bg-white dark:bg-neutral-700 rounded-2xl p-6 shadow-sm flex-row gap-4 items-start mb-4">
+                  <View className="w-12 h-12 rounded-xl bg-neutral-100 dark:bg-neutral-600 flex items-center justify-center shrink-0">
+                    {item.icon}
                   </View>
-                  <Text className="font-bold text-base text-neutral-800 dark:text-white">
-                    {item.title}
-                  </Text>
-                  <Text className="text-sm text-neutral-500 dark:text-neutral-300 leading-relaxed">
-                    {item.text}
-                  </Text>
+                  <View className="flex-1">
+                    <Text className="font-bold text-base text-neutral-800 dark:text-white mb-1">
+                      {item.title}
+                    </Text>
+                    <Text className="text-sm font-medium text-neutral-500 dark:text-neutral-300 leading-relaxed">
+                      {item.text}
+                    </Text>
+                  </View>
                 </View>
               </FadeInView>
             ))}
           </View>
+        </View>
 
-          {/* ── FAQ Section ── */}
-          <FadeInView>
-            <Text className="font-bold text-lg text-neutral-800 dark:text-white mb-1">
+        {/* ── FAQ Section ── */}
+        <View className="mb-10">
+          <FadeInView delay={300}>
+            <Text className="font-bold text-xl text-neutral-800 dark:text-white mb-2 font-mullish">
               Frequently Asked Questions
             </Text>
-            <Text className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
+            <Text className="text-sm font-medium text-neutral-500 dark:text-neutral-400 mb-6">
               Quick answers to common questions.
             </Text>
           </FadeInView>
 
-          <View className="mb-6">
+          <View>
             {faqs.map((faq, i) => (
-              <AccordionItem
-                key={i}
-                question={faq.question}
-                answer={faq.answer}
-                isOpen={openIndex === i}
-                onToggle={() => setOpenIndex(openIndex === i ? null : i)}
-              />
+              <FadeInView delay={400 + i * 50} key={i}>
+                <AccordionItem
+                  question={faq.question}
+                  answer={faq.answer}
+                  isOpen={openIndex === i}
+                  onToggle={() => setOpenIndex(openIndex === i ? null : i)}
+                />
+              </FadeInView>
             ))}
           </View>
+        </View>
 
-          {/* ── Quick Links ── */}
-          <FadeInView>
-            <Text className="font-bold text-lg text-neutral-800 dark:text-white mb-1">
+        {/* ── Quick Links ── */}
+        <View className="mb-10">
+          <FadeInView delay={500}>
+            <Text className="font-bold text-xl text-neutral-800 dark:text-white mb-2 font-mullish">
               Quick Links
             </Text>
-            <Text className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">
+            <Text className="text-sm font-medium text-neutral-500 dark:text-neutral-400 mb-6">
               Jump to key areas of the app.
             </Text>
           </FadeInView>
 
-          <View className="mb-6">
+          <View className="flex-row flex-wrap justify-between">
             {quickLinks.map((link, i) => (
-              <FadeInView key={i} delay={i * 80}>
-                <ScaleOnPressView
-                  onPress={() => router.push(link.route as any)}
-                  className="bg-white dark:bg-neutral-700 rounded-2xl p-4 shadow-sm flex-row items-center gap-4 mb-3"
-                >
-                  <View className="w-11 h-11 rounded-xl bg-neutral-100 dark:bg-neutral-600 items-center justify-center">
-                    <Ionicons
-                      name={link.icon as any}
-                      size={22}
-                      color={colorScheme === "dark" ? "#d4d4d8" : "#615793"}
-                    />
+              <FadeInView delay={600 + i * 50} key={i} className="w-[48%] mb-4">
+                <ScaleOnPressView onPress={() => router.push(link.route as any)} className="bg-white dark:bg-neutral-700 rounded-2xl p-4 shadow-sm h-full">
+                  <View className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-neutral-600 flex items-center justify-center shrink-0 mb-3">
+                    {link.icon}
                   </View>
-                  <View className="flex-1">
-                    <Text className="font-semibold text-[15px] text-neutral-800 dark:text-white">
-                      {link.label}
-                    </Text>
-                    <Text className="text-xs text-neutral-500 dark:text-neutral-400">
-                      {link.desc}
-                    </Text>
-                  </View>
-                  <Feather name="chevron-right" size={18} color="#a3a3a3" />
+                  <Text className="font-semibold text-sm text-neutral-800 dark:text-white mb-1">
+                    {link.label}
+                  </Text>
+                  <Text className="text-xs font-medium text-neutral-500 dark:text-neutral-400 leading-snug">
+                    {link.desc}
+                  </Text>
                 </ScaleOnPressView>
               </FadeInView>
             ))}
           </View>
+        </View>
 
-          {/* ── Contact CTA ── */}
-          <FadeInView>
-            <View className="bg-white dark:bg-neutral-700 rounded-3xl p-6 shadow-sm items-center gap-4 mb-6">
-              <View className="w-16 h-16 rounded-2xl bg-purple-100 dark:bg-purple-900/30 items-center justify-center">
-                <Ionicons name="mail-outline" size={32} color="#615793" />
-              </View>
-              <Text className="font-bold text-lg text-neutral-800 dark:text-white text-center">
+        {/* ── Contact / Support CTA ── */}
+        <FadeInView delay={700}>
+          <View className="bg-white dark:bg-neutral-700 rounded-3xl p-8 shadow-sm flex-col items-center gap-4 mb-8">
+            <View className="w-16 h-16 rounded-2xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+              <Feather name="mail" size={32} color="#9333ea" />
+            </View>
+            <View className="text-center items-center">
+              <Text className="font-bold text-lg text-neutral-800 dark:text-white font-mullish text-center">
                 Still need help?
               </Text>
-              <Text className="text-sm text-neutral-500 dark:text-neutral-400 text-center">
+              <Text className="text-sm font-medium text-neutral-500 dark:text-neutral-400 mt-2 text-center max-w-[280px]">
                 Our support team is just an email away. We usually reply within a few hours.
               </Text>
-              <ScaleOnPressView
-                onPress={() => Linking.openURL("mailto:support@eateasy.com")}
-                className="bg-purple-600 rounded-2xl px-8 py-3.5"
-              >
-                <Text className="text-white font-semibold text-sm">
-                  Contact Support
-                </Text>
-              </ScaleOnPressView>
             </View>
-          </FadeInView>
+            <ScaleOnPressView onPress={handleSupportEmail} className="px-8 py-4 rounded-2xl bg-purple-600 w-full mt-4 items-center">
+              <Text className="text-white font-bold text-sm">
+                Contact Support
+              </Text>
+            </ScaleOnPressView>
+          </View>
+        </FadeInView>
 
-          {/* ── Footer ── */}
-          <FadeInView>
-            <View className="items-center py-4">
-              <Text className="text-sm text-neutral-400 dark:text-neutral-500">
-                <Text className="text-neutral-800 dark:text-neutral-100">Eat</Text>
-                <Text className="font-bold text-orange-500">Easy</Text>
-                {" · Making meals effortless"}
-              </Text>
-              <Text className="text-xs text-neutral-400 dark:text-neutral-500 mt-1">
-                © {new Date().getFullYear()} EatEasy. All rights reserved.
-              </Text>
-            </View>
-          </FadeInView>
-        </View>
+        {/* ── Footer ── */}
+        <FadeInView delay={800}>
+          <View className="items-center py-4 opacity-70">
+            <Text className="text-sm font-semibold text-neutral-400 dark:text-neutral-500 mb-1">
+              <Text className="font-medium text-neutral-800 dark:text-neutral-100">Eat</Text>
+              <Text className="font-bold text-orange-500">Easy</Text>{" "}
+              &middot; Making meals effortless
+            </Text>
+            <Text className="text-xs font-medium text-neutral-400 dark:text-neutral-500">
+              &copy; {new Date().getFullYear()} EatEasy. All rights reserved.
+            </Text>
+          </View>
+        </FadeInView>
+
       </ScrollView>
-    </View>
+    </AppLayout>
   );
 };
 

@@ -190,17 +190,18 @@ const Sidebar = ({ onClose }: SidebarProps) => {
 
   // ── Determine active item from current route ──
   const activeItem = useMemo(() => {
-    if (pathname.includes("Homepage")) return "home";
-    if (pathname.includes("smart-assistant") || pathname.includes("VirtualAssistant") || pathname.includes("ChooseVirtualAssistant")) return "smart-assistant";
-    if (pathname.includes("FullMenu") || pathname.includes("Menu")) return "full-menu";
-    if (pathname.includes("history")) return "history";
-    if (pathname.includes("location") || pathname.includes("SetLocation")) return "locations";
-    if (pathname.includes("Restaurant") || pathname.includes("restaurant")) return "set-restaurant";
-    if (pathname.includes("rewards")) return "rewards";
-    if (pathname.includes("admin")) return "admin";
-    if (pathname.includes("help")) return "help";
-    if (pathname.includes("OrderStatus") || pathname.includes("orderStatus")) return "order-status";
-    if (pathname.includes("cart")) return "cart";
+    const lowerPath = pathname.toLowerCase();
+    if (lowerPath.includes("homepage")) return "home";
+    if (lowerPath.includes("smart-assistant") || lowerPath.includes("virtualassistant") || lowerPath.includes("choosevirtualassistant")) return "smart-assistant";
+    if (lowerPath.includes("fullmenu") || lowerPath.includes("menu")) return "full-menu";
+    if (lowerPath.includes("history")) return "history";
+    if (lowerPath.includes("location") || lowerPath.includes("setlocation")) return "locations";
+    if (lowerPath.includes("restaurant") || lowerPath.includes("restaurants")) return "set-restaurant";
+    if (lowerPath.includes("rewards")) return "rewards";
+    if (lowerPath.includes("admin")) return "admin";
+    if (lowerPath.includes("help")) return "help";
+    if (lowerPath.includes("orderstatus")) return "order-status";
+    if (lowerPath.includes("cart") || lowerPath.includes("mycart")) return "cart";
     return "home";
   }, [pathname]);
 
@@ -321,6 +322,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
       id: "help",
       icon: HelpIcon,
       label: "Help",
+      route: "/(protected)/Help",
     },
   ];
 
