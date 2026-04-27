@@ -270,7 +270,7 @@ const Help: React.FC = () => {
           <View className="flex-row flex-wrap justify-between">
             {quickLinks.map((link, i) => (
               <FadeInView delay={600 + i * 50} key={i} className="w-[48%] mb-4">
-                <ScaleOnPressView onPress={() => router.push(link.route as any)} className="bg-white dark:bg-neutral-700 rounded-2xl p-4 shadow-sm h-full">
+                <ScaleOnPressView onPress={() => router.push(link.route as any)} className="bg-white dark:bg-neutral-700 rounded-2xl p-4 shadow-sm">
                   <View className="w-10 h-10 rounded-xl bg-neutral-100 dark:bg-neutral-600 flex items-center justify-center shrink-0 mb-3">
                     {link.icon}
                   </View>
