@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Dimensions,
   TextInput,
+  Alert,
 } from "react-native";
 import { Image } from "expo-image";
 import { Feather, Ionicons, FontAwesome5 } from "@expo/vector-icons";
@@ -81,33 +82,45 @@ const ViewDish: React.FC<ViewDishProps> = ({ item, onClose, onAddToOrder }) => {
   const formatPrice = (n: number) => `$${n.toFixed(2)}`;
 
   const handleAddToOrder = () => {
-    const selected = Array.from(selectedToppings).map((id) => {
-      const t = (item.toppings ?? []).find((tt) => tt.id === id)!;
-      const qty = toppingCounts[id] || 0;
-      return {
-        id: t.id,
-        name: t.name,
-        price: t.price,
-        qty,
-        total: t.price * qty,
+    try {
+      const selected = Array.from(selectedToppings).map((id) => {
+        const t = (item.toppings ?? []).find((tt) => tt.id === id)!;
+        const qty = toppingCounts[id] || 0;
+        return {
+          id: t.id,
+          name: t.name,
+          price: t.price,
+          qty,
+          total: t.price * qty,
+        };
+      });
+
+      const order = {
+        id: item.id,
+        name: item.name,
+        image: item.image,
+        rating: item.rating,
+        reviews: item.reviews,
+        basePrice: item.price,
+        toppings: selected,
+        qty: count,
+        request: requestText,
+        price: (item.price + toppingsTotal) * count,
       };
-    });
 
-    const order = {
-      id: item.id,
-      name: item.name,
-      image: item.image,
-      rating: item.rating,
-      reviews: item.reviews,
-      basePrice: item.price,
-      toppings: selected,
-      qty: count,
-      request: requestText,
-      price: (item.price + toppingsTotal) * count,
-    };
-
-    onAddToOrder?.(order);
-    onClose();
+      onAddToOrder?.(order);
+      
+      // Provide visual feedback
+      Alert.alert(
+        "Added to Cart", 
+        `${count}x ${item.name} has been added to your cart.`,
+        [{ text: "OK", onPress: () => onClose() }]
+      );
+    } catch (e) {
+      console.error("Error adding to order:", e);
+      Alert.alert("Error", "Could not add item to order.");
+      onClose();
+    }
   };
 
   return (

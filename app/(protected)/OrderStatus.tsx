@@ -6,7 +6,7 @@ import { Image } from "expo-image";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Header from "../../components/layout/Header";
+import AppLayout from "../../components/layout/AppLayout";
 import { useRestaurant } from "../../contexts/RestaurantContext";
 import { OrderStatusSchema } from "../../schemas/OrderStatusSchema";
 import { FadeInView, ScaleOnPressView } from "../../components/animations/reanimated";
@@ -49,10 +49,8 @@ const OrderStatus: React.FC = () => {
   const bounceStyle = useAnimatedStyle(() => ({ transform: [{ translateY: bounceY.value }] }));
 
   return (
-    <View className="flex-1 bg-neutral-50 dark:bg-neutral-900">
-      <Header title="Order Status" backButton showSideBar={false} />
-
-      <ScrollView className="flex-1" contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
+    <AppLayout title="Order Status" showMenuButton={true} locationIcon={false} backButton={false}>
+      <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         {/* Status Card */}
         <FadeInView>
           <View className="bg-white dark:bg-neutral-700 rounded-2xl shadow-sm p-6 items-center mb-5">
@@ -155,7 +153,7 @@ const OrderStatus: React.FC = () => {
           </FadeInView>
         )}
       </ScrollView>
-    </View>
+    </AppLayout>
   );
 };
 

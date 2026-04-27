@@ -5,7 +5,7 @@ import {
 import { Image } from "expo-image";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Header from "../../components/layout/Header";
+import AppLayout from "../../components/layout/AppLayout";
 import { useOrder } from "../../hooks/useOrder";
 import { useRestaurant } from "../../contexts/RestaurantContext";
 import { orderService } from "../../services/orderService";
@@ -93,9 +93,8 @@ const OrderCheckout: React.FC = () => {
   };
 
   return (
-    <View className="flex-1 bg-neutral-50 dark:bg-neutral-900">
-      <Header title="Checkout" backButton showSideBar={false} />
-      <ScrollView className="flex-1" contentContainerStyle={{ padding: 20, paddingBottom: 120 }}>
+    <AppLayout title="Checkout" showMenuButton={true} locationIcon={false} backButton={false}>
+      <ScrollView className="flex-1" contentContainerStyle={{ padding: 20, paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
         <FadeInView>
           <View className="bg-white dark:bg-neutral-700 rounded-2xl p-5 shadow-sm mb-4">
             <TouchableOpacity onPress={() => setToggleOrderList(!toggleOrderList)} className="flex-row justify-between items-center mb-4">
@@ -169,7 +168,7 @@ const OrderCheckout: React.FC = () => {
 
       <Success isOpen={showSuccessModal} />
       <ProcessingPayment isOpen={isProcessing} />
-    </View>
+    </AppLayout>
   );
 };
 

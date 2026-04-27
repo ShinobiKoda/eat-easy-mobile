@@ -187,19 +187,6 @@ const Sidebar = ({ onClose }: SidebarProps) => {
   // ── UI state ──
   const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [cartDropdownOpen, setCartDropdownOpen] = useState(false);
-
-  // ── Chevron rotation animation ──
-  const chevronRotation = useSharedValue(0);
-  const chevronAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: `${chevronRotation.value}deg` }],
-  }));
-
-  useEffect(() => {
-    chevronRotation.value = withTiming(cartDropdownOpen ? 90 : 0, {
-      duration: 200,
-    });
-  }, [cartDropdownOpen]);
 
   // ── Determine active item from current route ──
   const activeItem = useMemo(() => {
@@ -309,6 +296,18 @@ const Sidebar = ({ onClose }: SidebarProps) => {
       label: "Set Restaurant",
       route: "/(protected)/Restaurants",
     },
+    {
+      id: "cart",
+      icon: CartOutlineIcon,
+      label: "My Cart",
+      route: "/(protected)/MyCart",
+    },
+    {
+      id: "order-status",
+      icon: BagOutlineIcon,
+      label: "Order Status",
+      route: "/(protected)/OrderStatus",
+    },
   ];
 
   const generalItems: MenuItem[] = [
@@ -399,67 +398,6 @@ const Sidebar = ({ onClose }: SidebarProps) => {
                   }}
                 />
               ))}
-
-              {/* ── Cart dropdown ── */}
-              <View>
-                <Pressable
-                  onPress={() => setCartDropdownOpen((v) => !v)}
-                  className="py-[6px] flex-row gap-[10px] items-center"
-                >
-                  {({ pressed }) => (
-                    <>
-                      <View
-                        className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-                          activeItem === "order-status" ||
-                          activeItem === "cart" ||
-                          cartDropdownOpen
-                            ? "bg-yellow-1"
-                            : "bg-[rgba(255,255,255,0.15)]"
-                        }`}
-                      >
-                        <CartOutlineIcon size={24} color="white" />
-                      </View>
-                      <Text
-                        className={`font-mulish-medium text-base flex-1 ${
-                          activeItem === "order-status" || activeItem === "cart"
-                            ? "text-yellow-1 font-mulish-bold"
-                            : "text-white"
-                        }`}
-                      >
-                        Cart
-                      </Text>
-                      <Animated.View style={chevronAnimatedStyle}>
-                        <ChevronForwardIcon size={20} color="white" />
-                      </Animated.View>
-                    </>
-                  )}
-                </Pressable>
-
-                {cartDropdownOpen && (
-                  <Animated.View entering={FadeIn.duration(200)} exiting={FadeOut.duration(150)}>
-                    <SubMenuButton
-                      icon={CartOutlineIcon}
-                      label="My Cart"
-                      isActive={activeItem === "cart"}
-                      onPress={() => {
-                        setCartDropdownOpen(false);
-                        onClose?.();
-                        // Open cart — you can integrate with a cart context here
-                      }}
-                    />
-                    <SubMenuButton
-                      icon={BagOutlineIcon}
-                      label="Order Status"
-                      isActive={activeItem === "order-status"}
-                      onPress={() => {
-                        setCartDropdownOpen(false);
-                        // navigateTo("/(protected)/OrderStatus");
-                        onClose?.();
-                      }}
-                    />
-                  </Animated.View>
-                )}
-              </View>
             </View>
           </View>
 
