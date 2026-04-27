@@ -382,7 +382,7 @@ const Profile: React.FC = () => {
   return (
     <View className="flex-1">
       <AppLayout title="Account" showMenuButton={true} locationIcon={false} backButton={false}>
-        <ScrollView className="flex-1" contentContainerStyle={{ padding: 20, paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
+        <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
           
           {/* ── Hero banner + avatar ───────────────────────────────── */}
           <SlideInUpView className="mb-8">
@@ -490,7 +490,7 @@ const Profile: React.FC = () => {
             <Text className="font-bold text-base text-neutral-800 dark:text-white font-mullish mb-4 px-1">
               Account Information
             </Text>
-            <View className="space-y-3">
+            <View className="flex flex-col gap-3">
               {fields.map((field) => (
                 <EditableField
                   key={field.key}
