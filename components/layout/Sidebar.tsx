@@ -375,7 +375,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
               >
                 {username}
               </Text>
-              <Pressable onPress={() => navigateTo("/(protected)/Homepage")}>
+              <Pressable onPress={() => navigateTo("/(protected)/Profile")}>
                 <Text className="font-mulish-medium text-sm text-white underline">
                   View Profile
                 </Text>
