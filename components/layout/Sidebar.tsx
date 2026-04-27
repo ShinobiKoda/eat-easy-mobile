@@ -315,6 +315,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
       id: "rewards",
       icon: MedalIcon,
       label: "My Rewards",
+      route: "/(protected)/Rewards",
     },
     {
       id: "help",
