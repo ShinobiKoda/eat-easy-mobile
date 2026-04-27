@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemeProvider, useTheme } from "../contexts/ThemeContext";
+import { AuthProvider } from "../context/AuthContext";
 import OrderBatchMonitor from "../components/dashboard/OrderBatchMonitor";
 import OrderReadyToast from "../components/OrderReadyToast";
 import "../global.css";
@@ -80,27 +81,29 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <LocationProvider>
-          <RestaurantProvider>
-            <OrderProvider>
-              <StatusBar
-                style="auto"
-                translucent
-                backgroundColor="transparent"
-                hidden
-              />
-              {!loaded && !error ? (
-                <LoadingState />
-              ) : (
-                <>
-                  <StackWithTheme />
-                  <OrderBatchMonitor />
-                  <OrderReadyToast />
-                </>
-              )}
-            </OrderProvider>
-          </RestaurantProvider>
-        </LocationProvider>
+        <AuthProvider>
+          <LocationProvider>
+            <RestaurantProvider>
+              <OrderProvider>
+                <StatusBar
+                  style="auto"
+                  translucent
+                  backgroundColor="transparent"
+                  hidden
+                />
+                {!loaded && !error ? (
+                  <LoadingState />
+                ) : (
+                  <>
+                    <StackWithTheme />
+                    <OrderBatchMonitor />
+                    <OrderReadyToast />
+                  </>
+                )}
+              </OrderProvider>
+            </RestaurantProvider>
+          </LocationProvider>
+        </AuthProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );
