@@ -250,6 +250,7 @@ const SignIn = () => {
             </TouchableOpacity>
           </FadeInView>
 
+          {/* TODO: Re-enable Google sign-in once database issues are resolved
           <FadeInView delay={450} className="w-full px-6 mt-6">
             <View className="w-full flex flex-row items-center justify-between mb-4">
               <View className="h-px bg-neutral-200 dark:bg-neutral-600 w-[30%]" />
@@ -266,6 +267,7 @@ const SignIn = () => {
               onPress={handleGoogleSignIn}
             />
           </FadeInView>
+          */}
           <FadeInView
             delay={500}
             className="w-full px-6 flex-row justify-center items-center mt-4 gap-1"

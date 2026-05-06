@@ -94,6 +94,7 @@ const SignInOptions = () => {
           imageSource={require("@/assets/images/facebook-icon.png")}
           disabled={true}
         />
+        {/* TODO: Re-enable Google sign-in once database issues are resolved
         <PrimaryButton
           text="Continue with Gmail"
           textClass="text-purple-2 dark:text-purple-5"
@@ -101,6 +102,7 @@ const SignInOptions = () => {
           imageSource={require("@/assets/images/gmail-icon.png")}
           onPress={handleGoogleSignIn}
         />
+        */}
       </SlideInUpView>
     </SafeAreaViewWrapper>
   );
